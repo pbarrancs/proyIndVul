@@ -28,40 +28,60 @@ Bootstrap: para proporcionar un intervalo de confianza para el índice, así com
 
 Referencias
 Scope Ratings es una calificadora crediticia en Europa. El índice publicado por Scope Ratings compara la  vulnerabilidad en países europeos, Estados Unidos de América, Japón y China. Nota: De aquí hicieron el 2.
+
 Índice de vulnerabilidad económica y de salud
 https://mexicocomovamos.mx/?s=contenido&id=1437
+
 Vulnerabilidad del Sector Informal en Tiempos de COVID
 http://tukanmx.com/shiny/apps/informalidad_covid/
+
 Recursos Físicos y Humanos del Sector Salud en México
+
 http://tukanmx.com/shiny/apps/infraestructura_salud/
+
 https://www.caribank.org/sites/default/files/publication-resources/Measuring%20Vulnerability-A%20Multidimensional%20Vulnerability%20Index%20for%20the%20Caribbean.pdf
+
 https://fraym.io/machine-learning-to-identify-high-risk-covid-19-populations/?utm_source=ng_covid_blog&utm_medium=ng_covid_blog&utm_campaign=ng_covid_blog
+
 https://www.smartcitiesworld.net/news/news/platform-helps-identify-us-populations-most-vulnerable-to-coronavirus-5151
+
 Measuring Multidimensional Vulnerability in Afghanistan by Maha Ahmed and Franziska Gassmann 
 https://link.springer.com/article/10.1007/s11205-019-02192-y
+
 https://medium.com/@ava_3974/el-tiempo-se-est%C3%A1-acabando-37fab8bcde4
+
 https://towardsdatascience.com/using-data-science-to-understand-and-attack-the-coronavirus-and-other-epidemics-41019c6b0c86
+
 https://github.com/datoscovidmx/datoscovidmx.github.io ||
 
 Fuentes de información
+
 Datos COVID
 https://datos.gob.mx/busca/dataset/informacion-referente-a-casos-covid-19-en-mexico
+
 Recursos e Infraestructura de Salud
 http://www.dgis.salud.gob.mx/contenidos/basesdedatos/da_recursos_gobmx.html
+
 Encuesta Nacional de Ocupación y Empleo
 https://www.inegi.org.mx/programas/enoe/15ymas/
+
 Datos de Pobreza CDMX
 https://www.coneval.org.mx/coordinacion/entidades/DistritoFederal/Paginas/principal.aspx	
+
 Índice de Desarrollo Social
 https://datos.cdmx.gob.mx/explore/dataset/vivienda-indice-de-desarrollo-social-en-la-ciudad/table/
+
 Índice Acceso a la salud 
 https://datos.cdmx.gob.mx/explore/dataset/diagnostico-cdmx_2015_salud/table/
+
 Centros de Acopio
 https://datos.cdmx.gob.mx/explore/dataset/centros_acopio/table/
+
 Covid en la Ciudad de México
 https://datos.cdmx.gob.mx/explore/dataset/casos-asociados-a-covid-19/table/?disjunctive.resultado
+
 Hospitales y Centros de Salud de la Ciudad de México
 https://datos.cdmx.gob.mx/explore/dataset/hospitales-y-centros-de-salud/table/
+
 Seguridad Social
 https://datos.cdmx.gob.mx/explore/dataset/seguridad-social-indice-de-desarrollo-social-en-la-ciudad/table/
-
