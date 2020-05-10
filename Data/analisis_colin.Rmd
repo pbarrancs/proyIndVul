@@ -62,37 +62,56 @@ Vemos otra vez que remuneración tiene la correlación más pequeña.
 
 Empecemos con el análisis de cada variable por significancia estadística:
 
--Ingreso_inferior con Poblacion afiliada a servicios de salud (1) X
+-Ingreso_inferior con Poblacion afiliada a servicios de salud (1) 
 
 -Carencia_alimentos con Personal_Medico y Solicitudes_desempleo (2)
 
--Carencia_salud Casos Confirmados y Poblacion afiliada a servicios de salud  (2) C
+-Carencia_salud Casos Confirmados y Poblacion afiliada a servicios de salud  (2) 
 
--Carencia_servicios con Solicitudes_desempleo (1) X
+-Carencia_servicios con Solicitudes_desempleo (1) 
 
--Solicitudes_desempleo con Ingreso_inferior, Carencia_servicios, Desempleados, Poblacion afiliada a servicios de salud (4) X
+-Solicitudes_desempleo con Ingreso_inferior, Carencia_servicios, Desempleados, Poblacion afiliada a servicios de salud (4) 
 
 -Desempleados con Carencia_salud, Solicitudes_desempleo, Poblacion afiliada a servicios de salud  (3) X
 
--Camas con nada (0) X
+-Camas con nada (0) 
 
--Personal_Medico con nada (0) X
+-Personal_Medico con nada (0) 
 
 -Casos Confirmados con Carencia_salud (1)
 
--Remuneracion (Millones de Pesos) con Carencia_servicios (1) X
+-Remuneracion (Millones de Pesos) con Carencia_servicios (1) 
 
--Poblacion afiliada a servicios de salud con Ingreso_inferior,Carencia_salud, Solicitudes_desempleo y Desempleados (4)X
+-Poblacion afiliada a servicios de salud con Ingreso_inferior,Carencia_salud, Solicitudes_desempleo y Desempleados (4)
 
-Yo dejaría  Remuneracion (Millones de Pesos), Poblacion afiliada a servicios de salud, camas, personal médico, casos confirmados y carencias de alimentos
+Yo dejaría  Carencias alimentos, remuneraciones, población afiliada, carencias de servicios.
 
- o Carencia_servicios, Camas, Casos Confirmados, Poblacion afiliada a servicios de salud.
+o carencia de servicios, desempleados, remuneraciones y población afiliada
+
+o carencia de servicios, solicitudes de desempleo, emuneraciones y población afiliada
+
+Volvemos a hacer el análisis con la primera propuesta:
+
+```{r}
+Y<-X[,c(2,10,11,4)]
+omcdiag(Y,Clave)
+```
+
+```{r}
+Z<-X[,c(10,6,4,11)]
+omcdiag(Z,Clave)
+```
+
+```{r}
+W<-X[,c(10,5,4,11)]
+omcdiag(W,Clave)
+```
 
 
+```{r}
+imcdiag(Y,Clave)
+imcdiag(Z,Clave)
+imcdiag(W,Clave)
+```
 
-
-
-
-
-
-
+Primera opción es la mejor Carencias alimentos, remuneraciones, población afiliada, carencias de servicios.
