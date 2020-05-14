@@ -1,4 +1,4 @@
-Alcaldia,Clave,Poblacion,km2,Ingreso_inferior,Carencia_alimentos,Carencia_salud,Carencia_servicios,Solicitudes_desempleo,Desempleados,Camas,Personal_Medico,Casos Confirmados ,Remuneracion (Millones de Pesos),Poblacion afiliada a servicios de salud,esperanza de vida,Promedio de escolaridad
+Alc,Clave,Pob,km2,In_inf,C_alim,C_sal,C_ser,Sol_des,Desem,Camas,P_Medico,C_Conf,Remuneracion ,P_af_serv,esp_vida,Prom_escolaridad
 Alvaro Obregon,9010,749982,96.17,272078,95419,135780,15321,725,25400,1546,5964,474,37672,79.54,77.04,10.8
 Azcapotzalco,9002,400161,33.6,121740,28518,57765,1336,481,12170,2227,8838,302,28776,84.11,74.97,11.1
 Benito Juarez,9014,417416,26.63,23879,17764,45769,23,291,12681,1599,7282,306,22331,81.7,81.02,13.8
