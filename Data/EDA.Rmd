@@ -9,6 +9,7 @@ Realizaremos en análisis exploratorio de datos para conocer el comportamiento d
 
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
+df<-df[,5:13] / df[,3] 
 df.1<-df[,-c(1,3,4)]
 ```
 
@@ -21,17 +22,18 @@ corrplot(cor(df.1[-1], method = "pearson"), type = "upper", method = "circle")
 
 ```{r,echo=FALSE}
 library(mctest)
-omcdiag(df.1[c(5,8,10,11,12,13,14)], df.1[1])
+omcdiag(df.1[c(5,8,9,10,11,12,13)], df.1[1])
 ```
 
-Notemos que las variables que menos se correlacionan con el resto son Remuneraciones, Personas afiliadas a servicio de salud, esperanza de vida, años promedio de escolaridad, camas y carencias de salud. Probamos su no-colinearidad con el determinante de su varianza de correlaciones, el "Red indicator" y la suma de lambda inversa. Aunque no pasan otras tres pruebas, las anteriores son suficientes para el futuro PCA que se realizará.
+Notemos que las variables que menos se correlacionan con el resto son Remuneraciones, Personas afiliadas a servicio de salud, esperanza de vida, años promedio de escolaridad, personal médico y carencias de servicios. Probamos su no-colinearidad con el determinante de su varianza de correlaciones, el "Red indicator" y la suma de lambda inversa. Aunque no pasan otras tres pruebas, las anteriores son suficientes para el futuro PCA que se realizará.
 
 
 ```{r,echo=FALSE}
 library(GGally)
 library(ggplot2)
-df.2<- cbind(df[,1],df.1[,c(5,8,10,11,12,13,14)])
+df.2<- cbind(df[1],df.1[c(5,8,9,10,11,12,13)])
 ```
+
 ```{r,echo=FALSE,include = FALSE}
 categcolum <- function(daf,col,names)
 {
@@ -58,8 +60,8 @@ Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice.
 
 ```{r,echo = FALSE}
 #Construccion de df.3, es decir df.2 + varibles categoricas
-Desem <- categcolum(df,10,c("Bajo","Mediano","Alto"))
-P_Medico <- categcolum(df,12,c("Bajo","Mediano","Alto"))
+Desem <- categcolum(df,9,c("Bajo","Mediano","Alto"))
+P_Medico <- categcolum(df,11,c("Bajo","Mediano","Alto"))
 df.3 <- cbind(df.2,Desem,P_Medico)
 ```
 
@@ -67,13 +69,15 @@ df.3 <- cbind(df.2,Desem,P_Medico)
 library(GGally)
 library(tidyverse)
 
-df.2 %>% ggpairs(columns = c(2:8),upper = list(continuous = wrap('cor',size = 2)))
+df.3 %>% ggpairs(columns = c(2:8),upper = list(continuous = wrap('cor',size = 2)),  mapping = aes(color = Desem))
 ```
 
+Veamos cómo se comportan los datos.
 
+Realizamos una gráfica de brazos y caja para conocer la distribución de las remuneraciones para cada nivel de desempleo. Encontramos outliers solo para la categoría de desempleo medio y, cómo era de esperarse, la media más baja de remuneraciones es para
 
 ```{r,echo=FALSE}
-p <- ggplot(df.3, aes(x=Alc, y=In_inf)) + 
+p <- ggplot(df.3, aes(x=Desem, y=Remuneracion)) + 
   geom_boxplot() 
 p+ theme(axis.text.x = element_text(angle = 90))
 ```
