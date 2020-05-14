@@ -1,0 +1,39 @@
+---
+title: "EDA Tío Jorge"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
+
+```{r}
+df<- read.csv("~/ITAM/Décimo/index/proyIndVul/Data/BD.csv")
+df<-df[,-c(1,3,4)]
+```
+
+¿Todas las variables aportan al índice? ¿Qué variables aportan más? ¿Qué variables aportan menos?
+
+```{r}
+library(corrplot)
+corrplot(cor(df[-1], method = "pearson"), type = "upper", method = "circle")
+```
+
+```{r}
+library(mctest)
+omcdiag(df[c(5,8,10,11,12,13,14)], df[1])
+```
+
+Notemos que las variables que menos se correlacionan con el resto son Remuneraciones, Personas afiliadas a servicio de salud, esperanza de vida, años promedio de escolaridad, camas y carencias de salud. Probamos su no-colinearidad con el determinante de su varianza de correlaciones, el "Red indicator" y la suma de lambda inversa. Aunqeu no pasan otras tres pruebas, las anteriores son suficientes para el futuro PCA que se realizará.
+
+
+
+
+
+
+
+
+
+
+
+
