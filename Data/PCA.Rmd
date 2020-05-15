@@ -13,22 +13,60 @@ library(factoextra)
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
 df[,5:13]<-df[,5:13]/df[,3]
-df[,13] <- df[,13]*1000
+df[,13] <- df[,13]*1000 #miles de pesos
 df <- df[,c(8,11:16)]
+names(df) <- c("X1","X2","X3","X4","X5","X6","X7")
 head(df)
 ```
 Para calcular los componentes principales, usaremos la matriz de correlación dado que las unidades de nuestras variables son distintas, a pesar de que la mayoria esten en terminos poblacionales.
 
-```{r}
+```{r, echo=FALSE,include=FALSE}
+#solo para comparar
 z <- princomp(df,cor = T)
 summary(z, loadings=T)
 ```
-
+Para eso scamos la matriz de correlacion $R$ que es la siguiente.
 ```{r}
-plot(z$sdev,type="o")
+(R <- round(cor(df),3))
 ```
+
+Ahora para calcular las componentes principales encontraremos sus egienvecores.
+```{r}
+eig <- eigen(R)
+(y <- round(eig$vectors,3)) #lo multiplicamos por -1 simplemente por practicidad
+```
+
+## Falta llenar estos valores
+Podemos ver que los componentes principales obtenidos de la matriz de correlación, son los siguientes.
+$$\begin{array}{l}
+Y_{1} =  0.266X_{1} + 0.421X_{2}+ 0.428X_{3} + 0.344X_{4} - 0.389X_{5} - 0.369X_{6} - 0.292X_{7} - 0.279X_{8}\\
+Y_{2} =  0.521X_{1} - 0.124X_{3} - 0.516X_{4} + 0.414X_{5} - 0.17X_{6} - 0.482X_{7} - 0.101X_{8}\\
+Y_{3} =  0.293X_{1} + 0.156X_{3} - 0.449X_{6} + 0.373X_{7} + 0.733X_{8}\\
+Y_{4} =  0.615X_{1} - 0.252X_{2} - 203X_{3} + 0.312X_{4} - 0.322X_{5} + 0.493X_{6} - 0.144X_{7} + 0.229X_{8}\\
+Y_{5} =  0.287X_{1} + 0.534X_{2} - 0.499X_{3} + 0.566X_{7} -0.322X_{8} \\
+Y_{6} =  0.296X_{1} - 0.643X_{2} - 0.238X_{3} + -0.243X_{6} + 0.406X_{7} - 0.467X_{8}\\
+Y_{7} =  0.104X_{1} + 0.215X_{2} + 0.673X_{3} -  0.363X_{4} + 0.567X_{6} + 0.186X_{7}\\
+Y_{8} =  0.117X_{1} + 0.155X_{3} +  0.613X_{4} + 0.755X_{5}\\
+\end{array}$$
+
+
+Haremos la grafica de codo correspondiente,para dererminar cuales son las componentes mas significativas.
+Para realizar esto, veremos que tanta varianza aporta cada componente principal, mediante el siguiente razonamiento.
+
+$$\frac{\lambda_{k}}{\lambda_{1} + ... + \lambda_{k}}$$
+
+```{r, echo = FALSE}
+aport_var <- function(l)
+{
+  lsum <- sum(l)
+  l/lsum
+}
+var <- aport_var(eig$values)
+plot(var,type="o",ylab = "Porcentaje de varianza expresada", xlab = "Componente")
+```
+
 ```{r}
 fviz_screeplot(z)
 ```
 
-
+## Hacer mas graficas y mas analisis
