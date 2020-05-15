@@ -97,8 +97,8 @@ Ahora queremos ver las observaciones de esperanza de vida para cada grupo de des
 library(ggbeeswarm)
 ggplot(df.3,aes(Desem, esp_vida)) + geom_quasirandom()
 ```
-
-¿Es el desempleo importante para determinar la esperanza de vida?
+ 
+¿Es el desempleo importante para determinar la esperanza de vida? Parace que no hay una correlación
 ```{r}
 library(dplyr)
 ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
@@ -106,7 +106,7 @@ ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
 ```
 
 
-¿Y la remuneración?
+¿Y la remuneración? No hay relación
 ```{r}
 library(dplyr)
 ggplot(df, aes(x=Remuneracion, y=esp_vida, size = Pob, col=Alc)) +
