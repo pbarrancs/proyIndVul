@@ -24,8 +24,7 @@ df.1<-df[,-c(1,3,4)]
 ¿Todas las variables aportan al índice? ¿Qué variables aportan más? ¿Qué variables aportan menos?
 
 ```{r,echo = FALSE}
-library(corrplot)
-corrplot(cor(df.1[-1], method = "pearson"), type = "upper", method = "circle")
+ggcorr(df.1[-1], label = T)
 ```
 
 ```{r,echo=FALSE}
