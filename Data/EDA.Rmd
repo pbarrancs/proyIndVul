@@ -1,15 +1,23 @@
 ---
 title: "EDA Tío Jorge"
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
   html_notebook: default
+  pdf_document: default
 ---
 
 Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
 
+```{r}
+library(GGally)
+library(tidyverse)
+```
+
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
-df[,5:12]<-df[,5:12]/df[,3]
+df[,5:13]<-df[,5:13]/df[,3]
+df[,13]<-df[,13]*1000
 df.1<-df[,-c(1,3,4)]
 ```
 
@@ -34,6 +42,8 @@ library(ggplot2)
 df.2<- cbind(df[1],df.1[c(5,8,9,10,11,12,13)])
 ```
 
+Así que las variables que más aportan son las siete antes mencionadas.
+
 ```{r,echo=FALSE,include = FALSE}
 categcolum <- function(daf,col,names)
 {
@@ -56,7 +66,7 @@ categcolum <- function(daf,col,names)
 }
 ```
 
-Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice. Decimos categorizar las variables para obtener visualizaciones que nos ayuden mas.
+Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar las variables para obtener visualizaciones que nos ayuden mas.
 
 ```{r,echo = FALSE}
 #Construccion de df.3, es decir df.2 + varibles categoricas
@@ -65,16 +75,15 @@ Desem <- categcolum(df,9,c("Bajo","Mediano","Alto"))
 df.3 <- cbind(df.2,Desem)
 ```
 
-```{r,echo = FALSO}
-library(GGally)
-library(tidyverse)
-
+```{r}
 df.3 %>% ggpairs(columns = c(2:8),upper = list(continuous = wrap('cor',size = 2)),  mapping = aes(color = Desem))
 ```
 
 Veamos cómo se comportan los datos.
 
-Realizamos una gráfica de brazos y caja para conocer la distribución de las remuneraciones para cada nivel de desempleo. Encontramos outliers solo para la categoría de desempleo medio y, cómo era de esperarse, la media más baja de remuneraciones es para
+¿Qué grupo de desempleo tiene la remuneración más baja?
+
+Realizamos una gráfica de brazos y caja para conocer la distribución de las remuneraciones para cada nivel de desempleo. Encontramos outliers solo para la categoría de desempleo medio y, cómo era de esperarse, la media más baja de remuneraciones es para la categoría de desempleo alto. 
 
 ```{r,echo=FALSE}
 p <- ggplot(df.3, aes(x=Desem, y=Remuneracion)) + 
@@ -82,9 +91,27 @@ p <- ggplot(df.3, aes(x=Desem, y=Remuneracion)) +
 p+ theme(axis.text.x = element_text(angle = 90))
 ```
 
+¿Qué grupo de desempleo tiene más varianza en la esperanza de vida?
+Ahora queremos ver las observaciones de esperanza de vida para cada grupo de desempleados. Encontramos que la CDMX es una región dónde la mayoría de las delegaciones tienen desempleo medio y a su vez la esperanza de vida más variada.
+```{r}
+library(ggbeeswarm)
+ggplot(df.3,aes(Desem, esp_vida)) + geom_quasirandom()
+```
+
+¿Es el desempleo importante para determinar la esperanza de vida?
+```{r}
+library(dplyr)
+ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
+    geom_point(alpha=0.7)
+```
 
 
-
+¿Y la remuneración?
+```{r}
+library(dplyr)
+ggplot(df, aes(x=Remuneracion, y=esp_vida, size = Pob, col=Alc)) +
+    geom_point(alpha=0.7)
+```
 
 
 
