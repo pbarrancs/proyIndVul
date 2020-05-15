@@ -1,0 +1,34 @@
+---
+title: "PCA"
+author: "Pablo, Román, Sofia"
+date: "14/5/2020"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(factoextra)
+```
+
+```{r,echo = FALSE}
+df<- read.csv("BD.csv")
+df[,5:13]<-df[,5:13]/df[,3]
+df[,13] <- df[,13]*1000
+df <- df[,c(8,11:16)]
+head(df)
+```
+Para calcular los componentes principales, usaremos la matriz de correlación dado que las unidades de nuestras variables son distintas, a pesar de que la mayoria esten en terminos poblacionales.
+
+```{r}
+z <- princomp(df,cor = T)
+summary(z, loadings=T)
+```
+
+```{r}
+plot(z$sdev,type="o")
+```
+```{r}
+fviz_screeplot(z)
+```
+
+
