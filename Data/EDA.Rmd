@@ -1,18 +1,33 @@
 ---
-title: "EDA Tío Jorge"
+title: "EDA index covid"
 output:
   html_document:
     df_print: paged
   html_notebook: default
   pdf_document: default
 ---
+```{r setup, include=FALSE, results=FALSE}
+#Instalar las librerias necesarias y cargarlas
+instalar <- function(paquete) {
+    if (!require(paquete,character.only = TRUE,
+                 quietly = TRUE, 
+                 warn.conflicts = FALSE)){
+          install.packages(as.character(paquete),
+                           dependecies = TRUE,
+                           repos = "http://cran.us.r-project.org")
+          library(paquete,
+                  character.only = TRUE, 
+                  quietly = TRUE,
+                  warn.conflicts = FALSE)
+    }
+}
+libs <- c('GGally', 'tidyverse', 'mctest', 'ggplot2', 'ggbeeswarm','dplyr', 'plotly') 
+lapply(libs, instalar)
+```
 
 Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
 
-```{r}
-library(GGally)
-library(tidyverse)
-```
+Dividimos las variables que estaban en terminos poblacionales entre la población de cada delegación, pues en el análisis visual había indonsistencias (mostrama que entre más desempleo mayor remuneración).
 
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
@@ -28,7 +43,6 @@ ggcorr(df.1[-1], label = T)
 ```
 
 ```{r,echo=FALSE}
-library(mctest)
 omcdiag(df.1[c(5,8,9,10,11,12,13)], df.1[1])
 ```
 
@@ -36,12 +50,12 @@ Notemos que las variables que menos se correlacionan con el resto son Remuneraci
 
 
 ```{r,echo=FALSE}
-library(GGally)
-library(ggplot2)
 df.2<- cbind(df[1],df.1[c(5,8,9,10,11,12,13)])
 ```
 
 Así que las variables que más aportan son las siete antes mencionadas.
+
+Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar las variables para obtener visualizaciones que nos ayuden mas.
 
 ```{r,echo=FALSE,include = FALSE}
 categcolum <- function(daf,col,names)
@@ -64,8 +78,6 @@ categcolum <- function(daf,col,names)
   return(r)
 }
 ```
-
-Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar las variables para obtener visualizaciones que nos ayuden mas.
 
 ```{r,echo = FALSE}
 #Construccion de df.3, es decir df.2 + varibles categoricas
@@ -93,7 +105,6 @@ p+ theme(axis.text.x = element_text(angle = 90))
 ¿Qué grupo de desempleo tiene más varianza en la esperanza de vida?
 Ahora queremos ver las observaciones de esperanza de vida para cada grupo de desempleados. Encontramos que la CDMX es una región dónde la mayoría de las delegaciones tienen desempleo medio y a su vez la esperanza de vida más variada.
 ```{r}
-library(ggbeeswarm)
 ggplot(df.3,aes(Desem, esp_vida)) + geom_quasirandom()
 ```
  
@@ -107,11 +118,14 @@ ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
 
 ¿Y la remuneración? No hay relación
 ```{r}
-library(dplyr)
 ggplot(df, aes(x=Remuneracion, y=esp_vida, size = Pob, col=Alc)) +
     geom_point(alpha=0.7)
 ```
 
+¿Están relacionadas las carencias? Parece que solo als alimenticias y las de salud, peor no las de servicios.
+```{r}
+plot_ly(x=df$C_alim, y=df$C_sal, z=df$C_ser, type="scatter3d", mode="markers", color=df$C_alim)
+```
 
 
 
