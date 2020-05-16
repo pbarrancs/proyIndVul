@@ -43,9 +43,30 @@ df %>%
     geom_point() +
     facet_wrap(~ var, scales = "free") +
     theme_bw()
+
+df %>%
+  gather(-Remuneracion, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = Remuneracion, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+
+df %>%
+  gather(-C_ser, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = C_ser, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+
+df %>%
+  gather(-Desem, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = Desem, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
 ```
 
-Revisamos los diagrama de dispersión de cada variable contra el resto y en todas encontramos outliers, sin embargo todos están relacionados a las diferencias significativas entre las observaciones, pues no son una muestra aleatoria de unidades observacionales. Comprobamos lo anterior observando el respetable índice Gini que muestra que, en efecto, el grupo de outliers es sumamente distinto al resto. Las delegaciones que presentan anomalías lo hacen para todas las variables y, a su vez, pertenecen al mismo sector económico.
+Revisamos los diagrama de dispersión de cada variable contra el resto y en todas encontramos outliers, sin embargo todos están relacionados a las diferencias significativas entre las observaciones, pues no son una muestra aleatoria de unidades observacionales. Comprobamos lo anterior observando el respetable índice Gini que muestra que, en efecto, el grupo de outliers es sumamente distinto al resto. Las delegaciones que presentan anomalías lo hacen para todas las variables y, a su vez, pertenecen al mismo sector económico. Estas son en particular las delegaciones Miguel Hidalgo, Cuahutemoc que tienen alta actividad economica y por otro lado Milpa Alta, la cual tiene la menor población y por lo mismo poca actividad economica.
 
 Entonces, continuaremos con el anális de colinearidad para elegir las variables más convenientes para el análisis:
 
