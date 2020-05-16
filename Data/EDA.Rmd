@@ -21,43 +21,68 @@ instalar <- function(paquete) {
                   warn.conflicts = FALSE)
     }
 }
-libs <- c('GGally', 'tidyverse', 'mctest', 'ggplot2', 'ggbeeswarm','dplyr', 'plotly') 
+libs <- c('GGally', 'tidyverse', 'mctest', 'ggplot2', 'ggbeeswarm','dplyr', 'plotly', 'tidyr', 'gridExtra') 
 lapply(libs, instalar)
 ```
 
 Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
 
-Dividimos las variables que estaban en terminos poblacionales entre la población de cada delegación, pues en el análisis visual había indonsistencias (mostrama que entre más desempleo mayor remuneración) y multiplicamos la variable de remuneraciones por mil para tenerla en miles de pesos y se alejara del cero.
-
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
 df[,5:13]<-df[,5:13]/df[,3]
-df[,13]<-df[,13]*1000
-df.1<-df[,-c(1,3,4)]
+df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
+df[,15]<-df[,15]/100 
 ```
 
-¿Todas las variables aportan al índice? ¿Qué variables aportan más? ¿Qué variables aportan menos?
+Queremos buscar outliers
+
+```{r}
+df %>%
+  gather(-In_inf, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = In_inf, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+
+df %>%
+  gather(-Remuneracion, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = Remuneracion, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+
+df %>%
+  gather(-C_ser, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = C_ser, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+
+df %>%
+  gather(-Desem, -Alc, -Clave,-km2, -Pob, key = "var", value = "value") %>%
+  ggplot(aes(x = value, y = Desem, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = "free") +
+    theme_bw()
+```
+
+Revisamos los diagrama de dispersión de cada variable contra el resto y en todas encontramos outliers, sin embargo todos están relacionados a las diferencias significativas entre las observaciones, pues no son una muestra aleatoria de unidades observacionales. Comprobamos lo anterior observando el respetable índice Gini que muestra que, en efecto, el grupo de outliers es sumamente distinto al resto. Las delegaciones que presentan anomalías lo hacen para todas las variables y, a su vez, pertenecen al mismo sector económico. Estas son en particular las delegaciones Miguel Hidalgo, Cuahutemoc que tienen alta actividad economica y por otro lado Milpa Alta, la cual tiene la menor población y por lo mismo poca actividad economica.
+
+Visualizar las correlaciones entre variabeles es útil para descartar a las que están altamente correlacionadas, pues podrían explicar los mismo y nos interesa la repetición:
 
 ```{r,echo = FALSE}
-ggcorr(df.1[-1], label = T)
+ggcorr(df[-c(1,2,3,4)], label = T)
 ```
 
-```{r,echo=FALSE}
-omcdiag(df.1[c(5,8,9,10,11,12,13)], df.1[1])
+Nos damos cuenta que las viarables con menos correlación son esperanza de vida, solicitudes de desempleo, casos confirmados, desempleo, personas afiliadas a servicios de salud.
+
+```{r}
+ggcorr(df[,c(5,6,7,11,13,16)], label = T)
 ```
 
-Notemos que las variables que menos se correlacionan con el resto son Remuneraciones, Personas afiliadas a servicio de salud, esperanza de vida, años promedio de escolaridad, personal médico y carencias de servicios. Probamos su no-colinearidad con el determinante de su varianza de correlaciones, el "Red indicator" y la suma de lambda inversa. Aunque no pasan otras tres pruebas, las anteriores son suficientes para el futuro PCA que se realizará.
+Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar algunas variables para obtener visualizaciones que nos ayuden más.
 
-
-```{r,echo=FALSE}
-df.2<- cbind(df[1],df.1[c(5,8,9,10,11,12,13)])
-```
-
-Así que las variables que más aportan son las siete antes mencionadas.
-
-Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar las variables para obtener visualizaciones que nos ayuden mas.
-
-```{r,echo=FALSE,include = FALSE}
+```{r}
 categcolum <- function(daf,col,names)
 {
   v <- as.numeric(scale(daf[,col]))
@@ -81,54 +106,53 @@ categcolum <- function(daf,col,names)
 
 ```{r,echo = FALSE}
 #Construccion de df.3, es decir df.2 + varibles categoricas
-Desem <- categcolum(df,9,c("Bajo","Mediano","Alto"))
-#P_Medico <- categcolum(df,11,c("Bajo","Mediano","Alto"))
-df.3 <- cbind(df.2,Desem)
+Desem <- categcolum(df,10,c("Bajo","Medio","Alto"))
+C_Conf <- categcolum(df,12,c("Bajo","Medio","Alto"))
+df.1 <- cbind(df[,c(5,6,7,11,13,16)],Desem,C_Conf)
 ```
+
+¿Qué nivel de desempleo tiene la remuneración más baja?
 
 ```{r}
-df.3 %>% ggpairs(columns = c(2:3),upper = list(continuous = wrap('cor',size = 2)),  mapping = aes(color = Alc))
-```
-
-
-Veamos cómo se comportan los datos.
-
-¿Qué grupo de desempleo tiene la remuneración más baja?
-
-Realizamos una gráfica de brazos y caja para conocer la distribución de las remuneraciones para cada nivel de desempleo. Encontramos outliers solo para la categoría de desempleo medio y, cómo era de esperarse, la media más baja de remuneraciones es para la categoría de desempleo alto. 
-
-```{r,echo=FALSE}
-p <- ggplot(df.3, aes(x=Desem, y=Remuneracion)) + 
+p <- ggplot(df.1, aes(x=Desem, y=Remuneracion)) + 
   geom_boxplot() 
 p+ theme(axis.text.x = element_text(angle = 90))
 ```
 
-¿Qué grupo de desempleo tiene más varianza en la esperanza de vida?
-Ahora queremos ver las observaciones de esperanza de vida para cada grupo de desempleados. Encontramos que la CDMX es una región dónde la mayoría de las delegaciones tienen desempleo medio y a su vez la esperanza de vida más variada.
+Encontramos dos outliers para las observaciones de las delegaciones Cuahutemoc y Miguel Hidalgo, sin ambargo al revisar los datos esto sucede porque se clasificó con un desempleo medio porque está en la frontera de ser bajo. Los demás descrubiminetos son consistentes; por ejemplo, la reumeración promedio más baja es para los que tienen desempleo alto. Por lo que, podemos concluir que entre mayor sea el desempleo, menor será la remuneración.
+
+¿Existe alguna relación entre el personal afiliado y la remuneración?
+
 ```{r}
-ggplot(df.3,aes(Desem, esp_vida)) + geom_quasirandom()
-```
- 
-¿Es el desempleo importante para determinar la esperanza de vida? Parace que no hay una correlación
-```{r}
-library(dplyr)
-ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
+ggplot(df, aes(x=Remuneracion, y=P_af_serv, size = Pob, col=Alc)) +
     geom_point(alpha=0.7)
 ```
 
+No parace exitir relación alguna y los outliers se dan por las diferencias en niveles socioeconómicos en las delegaciones Cuahutémoc y Miguel Hidalgo.
 
-¿Y la remuneración? No hay relación
+¿Existe alguna relación entre el nivel de casos confirmados y la remuneración?
+
 ```{r}
-ggplot(df, aes(x=Remuneracion, y=esp_vida, size = Pob, col=Alc)) +
-    geom_point(alpha=0.7)
+p <- ggplot(df.1, aes(x=C_Conf, y=Remuneracion)) + 
+  geom_boxplot() 
+p+ theme(axis.text.x = element_text(angle = 90))
 ```
 
-¿Están relacionadas las carencias? Parece que solo als alimenticias y las de salud, peor no las de servicios.
+
+
+¿Están relacionadas las carencias? Parece que solo las alimenticias y las de salud, peor no las de servicios.
+
 ```{r}
 plot_ly(x=df$C_alim, y=df$C_sal, z=df$C_ser, type="scatter3d", mode="markers", color=df$C_alim)
 ```
 
+¿Qué grupo de desempleo tiene más varianza en la esperanza de vida?
+Ahora queremos ver las observaciones de esperanza de vida para cada grupo de desempleados. Encontramos que la CDMX es una región dónde la mayoría de las delegaciones tienen desempleo medio y a su vez la esperanza de vida más variada.
 
+```{r}
+#ggplot(df.1,aes(df.1$Desem, df$esp_vida, color=)) + geom_quasirandom()
+ggplot(df.1, aes(df.1$Desem, df$esp_vida, color=df.1$Desem)) + geom_quasirandom(dodge.width=1)
+```
 
 
 
