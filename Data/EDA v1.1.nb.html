@@ -1752,85 +1752,28 @@ summary {
 <!-- rnb-text-end -->
 <!-- rnb-text-begin -->
 <p>Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.</p>
-<p>Dividimos las variables que estaban en terminos poblacionales entre la población de cada delegación, pues en el análisis visual había indonsistencias (mostrama que entre más desempleo mayor remuneración) y multiplicamos la variable de remuneraciones por mil para tenerla en miles de pesos y se alejara del cero.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>¿Todas las variables aportan al índice? ¿Qué variables aportan más? ¿Qué variables aportan menos?</p>
+<p>Queremos buscar outliers</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Notemos que las variables que menos se correlacionan con el resto son Remuneraciones, Personas afiliadas a servicio de salud, esperanza de vida, años promedio de escolaridad, personal médico y carencias de servicios. Probamos su no-colinearidad con el determinante de su varianza de correlaciones, el “Red indicator” y la suma de lambda inversa. Aunque no pasan otras tres pruebas, las anteriores son suficientes para el futuro PCA que se realizará.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Así que las variables que más aportan son las siete antes mencionadas.</p>
-<p>Al ver que muchas de estas variables no aprotaran variabilidad a nuestro indice, decidimos categorizar las variables para obtener visualizaciones que nos ayuden mas.</p>
-<!-- rnb-text-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYuMyAlPiUgZ2dwYWlycyhjb2x1bW5zID0gYygyOjgpLHVwcGVyID0gbGlzdChjb250aW51b3VzID0gd3JhcCgnY29yJyxzaXplID0gMikpLCAgbWFwcGluZyA9IGFlcyhjb2xvciA9IERlc2VtKSlcbmBgYCJ9 -->
-<pre class="r"><code>df.3 %&gt;% ggpairs(columns = c(2:8),upper = list(continuous = wrap(&#39;cor&#39;,size = 2)),  mapping = aes(color = Desem))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYgJT4lXG4gIGdhdGhlcigtSW5faW5mLCAtQWxjLCAtQ2xhdmUsLWttMiwgLVBvYiwga2V5ID0gXCJ2YXJcIiwgdmFsdWUgPSBcInZhbHVlXCIpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSB2YWx1ZSwgeSA9IEluX2luZiwgY29sb3IgPSBBbGMpKSArXG4gICAgZ2VvbV9wb2ludCgpICtcbiAgICBmYWNldF93cmFwKH4gdmFyLCBzY2FsZXMgPSBcImZyZWVcIikgK1xuICAgIHRoZW1lX2J3KClcbmBgYCJ9 -->
+<pre class="r"><code>df %&gt;%
+  gather(-In_inf, -Alc, -Clave,-km2, -Pob, key = &quot;var&quot;, value = &quot;value&quot;) %&gt;%
+  ggplot(aes(x = value, y = In_inf, color = Alc)) +
+    geom_point() +
+    facet_wrap(~ var, scales = &quot;free&quot;) +
+    theme_bw()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Veamos cómo se comportan los datos.</p>
-<p>¿Qué grupo de desempleo tiene la remuneración más baja?</p>
-<p>Realizamos una gráfica de brazos y caja para conocer la distribución de las remuneraciones para cada nivel de desempleo. Encontramos outliers solo para la categoría de desempleo medio y, cómo era de esperarse, la media más baja de remuneraciones es para la categoría de desempleo alto.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>¿Qué grupo de desempleo tiene más varianza en la esperanza de vida? Ahora queremos ver las observaciones de esperanza de vida para cada grupo de desempleados. Encontramos que la CDMX es una región dónde la mayoría de las delegaciones tienen desempleo medio y a su vez la esperanza de vida más variada.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRmLjMsYWVzKERlc2VtLCBlc3BfdmlkYSkpICsgZ2VvbV9xdWFzaXJhbmRvbSgpXG5gYGAifQ== -->
-<pre class="r"><code>ggplot(df.3,aes(Desem, esp_vida)) + geom_quasirandom()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>¿Es el desempleo importante para determinar la esperanza de vida? Parace que no hay una correlación</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkcGx5cilcbmdncGxvdChkZiwgYWVzKHg9RGVzZW0sIHk9ZXNwX3ZpZGEsIHNpemUgPSBQb2IsIGNvbD1BbGMpKSArXG4gICAgZ2VvbV9wb2ludChhbHBoYT0wLjcpXG5gYGAifQ== -->
-<pre class="r"><code>library(dplyr)
-ggplot(df, aes(x=Desem, y=esp_vida, size = Pob, col=Alc)) +
-    geom_point(alpha=0.7)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>¿Y la remuneración? No hay relación</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRmLCBhZXMoeD1SZW11bmVyYWNpb24sIHk9ZXNwX3ZpZGEsIHNpemUgPSBQb2IsIGNvbD1BbGMpKSArXG4gICAgZ2VvbV9wb2ludChhbHBoYT0wLjcpXG5gYGAifQ== -->
-<pre class="r"><code>ggplot(df, aes(x=Remuneracion, y=esp_vida, size = Pob, col=Alc)) +
-    geom_point(alpha=0.7)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>¿Están relacionadas las carencias? Parece que solo als alimenticias y las de salud, peor no las de servicios.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdF9seSh4PWRmJENfYWxpbSwgeT1kZiRDX3NhbCwgej1kZiRDX3NlciwgdHlwZT1cInNjYXR0ZXIzZFwiLCBtb2RlPVwibWFya2Vyc1wiLCBjb2xvcj1kZiRDX2FsaW0pXG5gYGAifQ== -->
-<pre class="r"><code>plot_ly(x=df$C_alim, y=df$C_sal, z=df$C_ser, type=&quot;scatter3d&quot;, mode=&quot;markers&quot;, color=df$C_alim)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<p>Revisamos los diagrama de dispersión de cada variable contra el resto y en todas encontramos outliers, sin embargo todos están relacionados a las diferencias significativas entre las observaciones, pues no son una muestra aleatoria de unidades observacionales. Comprobamos lo anterior observando el respetable índice Gini que muestra que, en efecto, el grupo de outliers es sumamente distinto al resto. Las delegaciones que presentan anomalías lo hacen para todas las variables y, a su vez, pertenecen al mismo sector económico.</p>
+<p>Entonces, continuaremos con el anális de colinearidad para elegir las variables más convenientes para el análisis:</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkVEQSBpbmRleCBjb3ZpZCINCm91dHB1dDoNCiAgaHRtbF9kb2N1bWVudDoNCiAgICBkZl9wcmludDogcGFnZWQNCiAgaHRtbF9ub3RlYm9vazogZGVmYXVsdA0KICBwZGZfZG9jdW1lbnQ6IGRlZmF1bHQNCi0tLQ0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0UsIHJlc3VsdHM9RkFMU0V9DQojSW5zdGFsYXIgbGFzIGxpYnJlcmlhcyBuZWNlc2FyaWFzIHkgY2FyZ2FybGFzDQppbnN0YWxhciA8LSBmdW5jdGlvbihwYXF1ZXRlKSB7DQogICAgaWYgKCFyZXF1aXJlKHBhcXVldGUsY2hhcmFjdGVyLm9ubHkgPSBUUlVFLA0KICAgICAgICAgICAgICAgICBxdWlldGx5ID0gVFJVRSwgDQogICAgICAgICAgICAgICAgIHdhcm4uY29uZmxpY3RzID0gRkFMU0UpKXsNCiAgICAgICAgICBpbnN0YWxsLnBhY2thZ2VzKGFzLmNoYXJhY3RlcihwYXF1ZXRlKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlcGVuZGVjaWVzID0gVFJVRSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlcG9zID0gImh0dHA6Ly9jcmFuLnVzLnItcHJvamVjdC5vcmciKQ0KICAgICAgICAgIGxpYnJhcnkocGFxdWV0ZSwNCiAgICAgICAgICAgICAgICAgIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSwgDQogICAgICAgICAgICAgICAgICBxdWlldGx5ID0gVFJVRSwNCiAgICAgICAgICAgICAgICAgIHdhcm4uY29uZmxpY3RzID0gRkFMU0UpDQogICAgfQ0KfQ0KbGlicyA8LSBjKCdHR2FsbHknLCAndGlkeXZlcnNlJywgJ21jdGVzdCcsICdnZ3Bsb3QyJywgJ2dnYmVlc3dhcm0nLCdkcGx5cicsICdwbG90bHknKSANCmxhcHBseShsaWJzLCBpbnN0YWxhcikNCmBgYA0KDQpSZWFsaXphcmVtb3MgZW4gYW7DoWxpc2lzIGV4cGxvcmF0b3JpbyBkZSBkYXRvcyBwYXJhIGNvbm9jZXIgZWwgY29tcG9ydGFtaWVudG8gZGUgbnVlc3RhcyB2YXJpYWJsZXMuDQoNCkRpdmlkaW1vcyBsYXMgdmFyaWFibGVzIHF1ZSBlc3RhYmFuIGVuIHRlcm1pbm9zIHBvYmxhY2lvbmFsZXMgZW50cmUgbGEgcG9ibGFjacOzbiBkZSBjYWRhIGRlbGVnYWNpw7NuLCBwdWVzIGVuIGVsIGFuw6FsaXNpcyB2aXN1YWwgaGFiw61hIGluZG9uc2lzdGVuY2lhcyAobW9zdHJhbWEgcXVlIGVudHJlIG3DoXMgZGVzZW1wbGVvIG1heW9yIHJlbXVuZXJhY2nDs24pIHkgbXVsdGlwbGljYW1vcyBsYSB2YXJpYWJsZSBkZSByZW11bmVyYWNpb25lcyBwb3IgbWlsIHBhcmEgdGVuZXJsYSBlbiBtaWxlcyBkZSBwZXNvcyB5IHNlIGFsZWphcmEgZGVsIGNlcm8uDQoNCmBgYHtyLGVjaG8gPSBGQUxTRX0NCmRmPC0gcmVhZC5jc3YoIkJELmNzdiIpDQpkZlssNToxM108LWRmWyw1OjEzXS9kZlssM10NCmRmWywxM108LWRmWywxM10qMTAwMA0KZGYuMTwtZGZbLC1jKDEsMyw0KV0NCmBgYA0KDQrCv1RvZGFzIGxhcyB2YXJpYWJsZXMgYXBvcnRhbiBhbCDDrW5kaWNlPyDCv1F1w6kgdmFyaWFibGVzIGFwb3J0YW4gbcOhcz8gwr9RdcOpIHZhcmlhYmxlcyBhcG9ydGFuIG1lbm9zPw0KDQpgYGB7cixlY2hvID0gRkFMU0V9DQpnZ2NvcnIoZGYuMVstMV0sIGxhYmVsID0gVCkNCmBgYA0KDQpgYGB7cixlY2hvPUZBTFNFfQ0Kb21jZGlhZyhkZi4xW2MoNSw4LDksMTAsMTEsMTIsMTMpXSwgZGYuMVsxXSkNCmBgYA0KDQpOb3RlbW9zIHF1ZSBsYXMgdmFyaWFibGVzIHF1ZSBtZW5vcyBzZSBjb3JyZWxhY2lvbmFuIGNvbiBlbCByZXN0byBzb24gUmVtdW5lcmFjaW9uZXMsIFBlcnNvbmFzIGFmaWxpYWRhcyBhIHNlcnZpY2lvIGRlIHNhbHVkLCBlc3BlcmFuemEgZGUgdmlkYSwgYcOxb3MgcHJvbWVkaW8gZGUgZXNjb2xhcmlkYWQsIHBlcnNvbmFsIG3DqWRpY28geSBjYXJlbmNpYXMgZGUgc2VydmljaW9zLiBQcm9iYW1vcyBzdSBuby1jb2xpbmVhcmlkYWQgY29uIGVsIGRldGVybWluYW50ZSBkZSBzdSB2YXJpYW56YSBkZSBjb3JyZWxhY2lvbmVzLCBlbCAiUmVkIGluZGljYXRvciIgeSBsYSBzdW1hIGRlIGxhbWJkYSBpbnZlcnNhLiBBdW5xdWUgbm8gcGFzYW4gb3RyYXMgdHJlcyBwcnVlYmFzLCBsYXMgYW50ZXJpb3JlcyBzb24gc3VmaWNpZW50ZXMgcGFyYSBlbCBmdXR1cm8gUENBIHF1ZSBzZSByZWFsaXphcsOhLg0KDQoNCmBgYHtyLGVjaG89RkFMU0V9DQpkZi4yPC0gY2JpbmQoZGZbMV0sZGYuMVtjKDUsOCw5LDEwLDExLDEyLDEzKV0pDQpgYGANCg0KQXPDrSBxdWUgbGFzIHZhcmlhYmxlcyBxdWUgbcOhcyBhcG9ydGFuIHNvbiBsYXMgc2lldGUgYW50ZXMgbWVuY2lvbmFkYXMuDQoNCkFsIHZlciBxdWUgbXVjaGFzIGRlIGVzdGFzIHZhcmlhYmxlcyBubyBhcHJvdGFyYW4gdmFyaWFiaWxpZGFkIGEgbnVlc3RybyBpbmRpY2UsIGRlY2lkaW1vcyBjYXRlZ29yaXphciBsYXMgdmFyaWFibGVzIHBhcmEgb2J0ZW5lciB2aXN1YWxpemFjaW9uZXMgcXVlIG5vcyBheXVkZW4gbWFzLg0KDQpgYGB7cixlY2hvPUZBTFNFLGluY2x1ZGUgPSBGQUxTRX0NCmNhdGVnY29sdW0gPC0gZnVuY3Rpb24oZGFmLGNvbCxuYW1lcykNCnsNCiAgdiA8LSBhcy5udW1lcmljKHNjYWxlKGRhZlssY29sXSkpDQogIG4gPC0gbGVuZ3RoKG5hbWVzKQ0KICBkaW0gPC0gbGVuZ3RoKHYpDQogIHBhcnQgPC0gMS9uDQogIHIgPC0gYygpDQogIGZvciAoaSBpbiAxOmRpbSkNCiAgew0KICAgIGlmKHZbaV0gPD0gLTEpDQogICAgICByW2ldIDwtIG5hbWVzWzFdDQogICAgZWxzZQ0KICAgICAgaWYodltpXSA8PSAxKQ0KICAgICAgcltpXSA8LSBuYW1lc1syXQ0KICAgICAgZWxzZQ0KICAgICAgICByW2ldIDwtIG5hbWVzWzNdDQogIH0NCiAgcmV0dXJuKHIpDQp9DQpgYGANCg0KYGBge3IsZWNobyA9IEZBTFNFfQ0KI0NvbnN0cnVjY2lvbiBkZSBkZi4zLCBlcyBkZWNpciBkZi4yICsgdmFyaWJsZXMgY2F0ZWdvcmljYXMNCkRlc2VtIDwtIGNhdGVnY29sdW0oZGYsOSxjKCJCYWpvIiwiTWVkaWFubyIsIkFsdG8iKSkNCiNQX01lZGljbyA8LSBjYXRlZ2NvbHVtKGRmLDExLGMoIkJham8iLCJNZWRpYW5vIiwiQWx0byIpKQ0KZGYuMyA8LSBjYmluZChkZi4yLERlc2VtKQ0KYGBgDQoNCmBgYHtyfQ0KZGYuMyAlPiUgZ2dwYWlycyhjb2x1bW5zID0gYygyOjgpLHVwcGVyID0gbGlzdChjb250aW51b3VzID0gd3JhcCgnY29yJyxzaXplID0gMikpLCAgbWFwcGluZyA9IGFlcyhjb2xvciA9IERlc2VtKSkNCmBgYA0KDQpWZWFtb3MgY8OzbW8gc2UgY29tcG9ydGFuIGxvcyBkYXRvcy4NCg0Kwr9RdcOpIGdydXBvIGRlIGRlc2VtcGxlbyB0aWVuZSBsYSByZW11bmVyYWNpw7NuIG3DoXMgYmFqYT8NCg0KUmVhbGl6YW1vcyB1bmEgZ3LDoWZpY2EgZGUgYnJhem9zIHkgY2FqYSBwYXJhIGNvbm9jZXIgbGEgZGlzdHJpYnVjacOzbiBkZSBsYXMgcmVtdW5lcmFjaW9uZXMgcGFyYSBjYWRhIG5pdmVsIGRlIGRlc2VtcGxlby4gRW5jb250cmFtb3Mgb3V0bGllcnMgc29sbyBwYXJhIGxhIGNhdGVnb3LDrWEgZGUgZGVzZW1wbGVvIG1lZGlvIHksIGPDs21vIGVyYSBkZSBlc3BlcmFyc2UsIGxhIG1lZGlhIG3DoXMgYmFqYSBkZSByZW11bmVyYWNpb25lcyBlcyBwYXJhIGxhIGNhdGVnb3LDrWEgZGUgZGVzZW1wbGVvIGFsdG8uIA0KDQpgYGB7cixlY2hvPUZBTFNFfQ0KcCA8LSBnZ3Bsb3QoZGYuMywgYWVzKHg9RGVzZW0sIHk9UmVtdW5lcmFjaW9uKSkgKyANCiAgZ2VvbV9ib3hwbG90KCkgDQpwKyB0aGVtZShheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChhbmdsZSA9IDkwKSkNCmBgYA0KDQrCv1F1w6kgZ3J1cG8gZGUgZGVzZW1wbGVvIHRpZW5lIG3DoXMgdmFyaWFuemEgZW4gbGEgZXNwZXJhbnphIGRlIHZpZGE/DQpBaG9yYSBxdWVyZW1vcyB2ZXIgbGFzIG9ic2VydmFjaW9uZXMgZGUgZXNwZXJhbnphIGRlIHZpZGEgcGFyYSBjYWRhIGdydXBvIGRlIGRlc2VtcGxlYWRvcy4gRW5jb250cmFtb3MgcXVlIGxhIENETVggZXMgdW5hIHJlZ2nDs24gZMOzbmRlIGxhIG1heW9yw61hIGRlIGxhcyBkZWxlZ2FjaW9uZXMgdGllbmVuIGRlc2VtcGxlbyBtZWRpbyB5IGEgc3UgdmV6IGxhIGVzcGVyYW56YSBkZSB2aWRhIG3DoXMgdmFyaWFkYS4NCmBgYHtyfQ0KZ2dwbG90KGRmLjMsYWVzKERlc2VtLCBlc3BfdmlkYSkpICsgZ2VvbV9xdWFzaXJhbmRvbSgpDQpgYGANCiANCsK/RXMgZWwgZGVzZW1wbGVvIGltcG9ydGFudGUgcGFyYSBkZXRlcm1pbmFyIGxhIGVzcGVyYW56YSBkZSB2aWRhPyBQYXJhY2UgcXVlIG5vIGhheSB1bmEgY29ycmVsYWNpw7NuDQpgYGB7cn0NCmxpYnJhcnkoZHBseXIpDQpnZ3Bsb3QoZGYsIGFlcyh4PURlc2VtLCB5PWVzcF92aWRhLCBzaXplID0gUG9iLCBjb2w9QWxjKSkgKw0KICAgIGdlb21fcG9pbnQoYWxwaGE9MC43KQ0KYGBgDQoNCg0Kwr9ZIGxhIHJlbXVuZXJhY2nDs24/IE5vIGhheSByZWxhY2nDs24NCmBgYHtyfQ0KZ2dwbG90KGRmLCBhZXMoeD1SZW11bmVyYWNpb24sIHk9ZXNwX3ZpZGEsIHNpemUgPSBQb2IsIGNvbD1BbGMpKSArDQogICAgZ2VvbV9wb2ludChhbHBoYT0wLjcpDQpgYGANCg0Kwr9Fc3TDoW4gcmVsYWNpb25hZGFzIGxhcyBjYXJlbmNpYXM/IFBhcmVjZSBxdWUgc29sbyBhbHMgYWxpbWVudGljaWFzIHkgbGFzIGRlIHNhbHVkLCBwZW9yIG5vIGxhcyBkZSBzZXJ2aWNpb3MuDQpgYGB7cn0NCnBsb3RfbHkoeD1kZiRDX2FsaW0sIHk9ZGYkQ19zYWwsIHo9ZGYkQ19zZXIsIHR5cGU9InNjYXR0ZXIzZCIsIG1vZGU9Im1hcmtlcnMiLCBjb2xvcj1kZiRDX2FsaW0pDQpgYGANCg0KDQoNCg0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkVEQSBpbmRleCBjb3ZpZCINCm91dHB1dDoNCiAgaHRtbF9kb2N1bWVudDoNCiAgICBkZl9wcmludDogcGFnZWQNCiAgaHRtbF9ub3RlYm9vazogZGVmYXVsdA0KICBwZGZfZG9jdW1lbnQ6IGRlZmF1bHQNCi0tLQ0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0UsIHJlc3VsdHM9RkFMU0V9DQojSW5zdGFsYXIgbGFzIGxpYnJlcmlhcyBuZWNlc2FyaWFzIHkgY2FyZ2FybGFzDQppbnN0YWxhciA8LSBmdW5jdGlvbihwYXF1ZXRlKSB7DQogICAgaWYgKCFyZXF1aXJlKHBhcXVldGUsY2hhcmFjdGVyLm9ubHkgPSBUUlVFLA0KICAgICAgICAgICAgICAgICBxdWlldGx5ID0gVFJVRSwgDQogICAgICAgICAgICAgICAgIHdhcm4uY29uZmxpY3RzID0gRkFMU0UpKXsNCiAgICAgICAgICBpbnN0YWxsLnBhY2thZ2VzKGFzLmNoYXJhY3RlcihwYXF1ZXRlKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlcGVuZGVjaWVzID0gVFJVRSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlcG9zID0gImh0dHA6Ly9jcmFuLnVzLnItcHJvamVjdC5vcmciKQ0KICAgICAgICAgIGxpYnJhcnkocGFxdWV0ZSwNCiAgICAgICAgICAgICAgICAgIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSwgDQogICAgICAgICAgICAgICAgICBxdWlldGx5ID0gVFJVRSwNCiAgICAgICAgICAgICAgICAgIHdhcm4uY29uZmxpY3RzID0gRkFMU0UpDQogICAgfQ0KfQ0KbGlicyA8LSBjKCdHR2FsbHknLCAndGlkeXZlcnNlJywgJ21jdGVzdCcsICdnZ3Bsb3QyJywgJ2dnYmVlc3dhcm0nLCdkcGx5cicsICdwbG90bHknLCAndGlkeXInLCAnZ3JpZEV4dHJhJykgDQpsYXBwbHkobGlicywgaW5zdGFsYXIpDQpgYGANCg0KUmVhbGl6YXJlbW9zIGVuIGFuw6FsaXNpcyBleHBsb3JhdG9yaW8gZGUgZGF0b3MgcGFyYSBjb25vY2VyIGVsIGNvbXBvcnRhbWllbnRvIGRlIG51ZXN0YXMgdmFyaWFibGVzLg0KDQpgYGB7cixlY2hvID0gRkFMU0V9DQpkZjwtIHJlYWQuY3N2KCJCRC5jc3YiKQ0KZGZbLDU6MTNdPC1kZlssNToxM10vZGZbLDNdDQpkZlssMTNdPC1kZlssMTNdKjEwMDAgI1JlbXVuZXJhY2nDs24gZW4gbWlsZXMgZGUgcGVzb3MNCmBgYA0KDQpRdWVyZW1vcyBidXNjYXIgb3V0bGllcnMNCg0KYGBge3J9DQpkZiAlPiUNCiAgZ2F0aGVyKC1Jbl9pbmYsIC1BbGMsIC1DbGF2ZSwta20yLCAtUG9iLCBrZXkgPSAidmFyIiwgdmFsdWUgPSAidmFsdWUiKSAlPiUNCiAgZ2dwbG90KGFlcyh4ID0gdmFsdWUsIHkgPSBJbl9pbmYsIGNvbG9yID0gQWxjKSkgKw0KICAgIGdlb21fcG9pbnQoKSArDQogICAgZmFjZXRfd3JhcCh+IHZhciwgc2NhbGVzID0gImZyZWUiKSArDQogICAgdGhlbWVfYncoKQ0KYGBgDQoNClJldmlzYW1vcyBsb3MgZGlhZ3JhbWEgZGUgZGlzcGVyc2nDs24gZGUgY2FkYSB2YXJpYWJsZSBjb250cmEgZWwgcmVzdG8geSBlbiB0b2RhcyBlbmNvbnRyYW1vcyBvdXRsaWVycywgc2luIGVtYmFyZ28gdG9kb3MgZXN0w6FuIHJlbGFjaW9uYWRvcyBhIGxhcyBkaWZlcmVuY2lhcyBzaWduaWZpY2F0aXZhcyBlbnRyZSBsYXMgb2JzZXJ2YWNpb25lcywgcHVlcyBubyBzb24gdW5hIG11ZXN0cmEgYWxlYXRvcmlhIGRlIHVuaWRhZGVzIG9ic2VydmFjaW9uYWxlcy4gQ29tcHJvYmFtb3MgbG8gYW50ZXJpb3Igb2JzZXJ2YW5kbyBlbCByZXNwZXRhYmxlIMOtbmRpY2UgR2luaSBxdWUgbXVlc3RyYSBxdWUsIGVuIGVmZWN0bywgZWwgZ3J1cG8gZGUgb3V0bGllcnMgZXMgc3VtYW1lbnRlIGRpc3RpbnRvIGFsIHJlc3RvLiBMYXMgZGVsZWdhY2lvbmVzIHF1ZSBwcmVzZW50YW4gYW5vbWFsw61hcyBsbyBoYWNlbiBwYXJhIHRvZGFzIGxhcyB2YXJpYWJsZXMgeSwgYSBzdSB2ZXosIHBlcnRlbmVjZW4gYWwgbWlzbW8gc2VjdG9yIGVjb27Ds21pY28uDQoNCkVudG9uY2VzLCBjb250aW51YXJlbW9zIGNvbiBlbCBhbsOhbGlzIGRlIGNvbGluZWFyaWRhZCBwYXJhIGVsZWdpciBsYXMgdmFyaWFibGVzIG3DoXMgY29udmVuaWVudGVzIHBhcmEgZWwgYW7DoWxpc2lzOg0KDQoNCg==</div>
 
 
 
@@ -1877,7 +1820,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("EDA.Rmd");
+  window.initializeSourceEmbed("EDA v1.1.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

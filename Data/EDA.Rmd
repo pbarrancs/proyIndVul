@@ -27,7 +27,7 @@ lapply(libs, instalar)
 
 Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
 
-Dividimos las variables que estaban en terminos poblacionales entre la población de cada delegación, pues en el análisis visual había indonsistencias (mostrama que entre más desempleo mayor remuneración).
+Dividimos las variables que estaban en terminos poblacionales entre la población de cada delegación, pues en el análisis visual había indonsistencias (mostrama que entre más desempleo mayor remuneración) y multiplicamos la variable de remuneraciones por mil para tenerla en miles de pesos y se alejara del cero.
 
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
@@ -87,8 +87,9 @@ df.3 <- cbind(df.2,Desem)
 ```
 
 ```{r}
-df.3 %>% ggpairs(columns = c(2:8),upper = list(continuous = wrap('cor',size = 2)),  mapping = aes(color = Desem))
+df.3 %>% ggpairs(columns = c(2:3),upper = list(continuous = wrap('cor',size = 2)),  mapping = aes(color = Alc))
 ```
+
 
 Veamos cómo se comportan los datos.
 
