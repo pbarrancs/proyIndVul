@@ -45,7 +45,7 @@ head(df)
 
 Para calcular los componentes principales, usaremos la matriz de correlación dado que las unidades de nuestras variables son distintas, a pesar de que la mayoria esten en terminos poblacionales.
 
-```{r, echo=FALS,include=FALSE}
+```{r}
 #solo para comparar y para fines graficos
 z <- princomp(df,cor = T)
 summary(z, loadings=T)
@@ -122,22 +122,51 @@ fviz_pca_biplot(z, repel = TRUE,
                 )
 ```
 
-##Interpretaión de las graficas
-##Grafica con elipses aplica aqui?
-
 ##Índice por delegación
 
 ```{r}
-c("Álvaro Obregón", "Azcapotzalco", "Benito Juárez", "Coyoacán", "Cuajimalpa de Morelos", "Cuahutémoc", "Gustavo A. Madero","Iztacalco","Iztapalapa","La Magdalena Contreras", "Miguel Hidalgo", "Milá Alta", "Tláhuac", "Tlalpan", "Venustiano Carranza", "Xochimilco")
+indice <- function(df,vec){
+  n = length(df[,1])
+  ind = c()
+  for ( i in 1:n){
+    ind[i] = vec[1]*df[i,1] + vec[2]*df[i,2] + vec[3]*df[i,3] + vec[4]*df[i,4] +vec[5]*df[i,5] + vec[6]*df[i,6]
+  }
+  return(ind)
+}
+scores <- eig$vectors[,1]
+ind <- indice(df,scores)
+(ind <- round(100/as.numeric(ind),3))
 ```
-
-
-##Cemaforo de la ciudad de México
 
 ```{r}
-#cargamos los datos de los scores por alcaldía
-mapa<-st_read("~/ITAM/Décimo/index/alcaldias/alcaldias.shp",stringsAsFactors=FALSE)
-str(mapa)
-mapa_datos <- inner_join(mapa,index)
+nomgeo <- c("Álvaro Obregón", "Azcapotzalco", "Benito Juárez", "Coyoacán", "Cuajimalpa de Morelos", "Cuauhtémoc", "Gustavo A. Madero","Iztacalco","Iztapalapa","La Magdalena Contreras", "Miguel Hidalgo", "Milpa Alta", "Tláhuac", "Tlalpan", "Venustiano Carranza", "Xochimilco")
+index <- data.frame(nomgeo,ind)
 ```
+
+
+##Semaforo de la ciudad de México
+
+```{r}
+mapa<-st_read("alcaldias/alcaldias.shp",stringsAsFactors=FALSE)
+str(mapa)
+mapa_datos <- inner_join(mapa,index, by="nomgeo")
+str(mapa_datos)
+```
+
+```{r, echo=FALSE, include=FALSE}
+tm_shape(mapa_datos)+
+  tm_polygons("ind",id="nomgeo",plette="Reds")
+```
+
+
+```{r}
+tmap_mode("view")
+tmap_last()
+```
+
+
+
+
+
+
 
