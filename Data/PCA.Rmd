@@ -20,11 +20,10 @@ instalar <- function(paquete) {
                   warn.conflicts = FALSE)
     }
 }
-libs <- c('rgdal', 'factoextra', 'gridExtra', ) 
+libs <- c('rgdal', 'factoextra', 'gridExtra','sf', 'ggplot2', 'tmap', 'tmaptools', 'leaflet','dplyr') 
 lapply(libs, instalar)
+options(scipen=999)
 ```
-
-
 
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
@@ -128,6 +127,6 @@ fviz_pca_biplot(z, repel = TRUE,
 ##Cemaforo de la ciudad de México
 
 ```{r}
-
+#cargamos los datos de los scores por alcaldía
 ```
 
