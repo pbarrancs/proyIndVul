@@ -5,10 +5,26 @@ date: "14/5/2020"
 output: html_document
 ---
 
-```{r, echo=FALSE}
-library(ggplot2)
-library(factoextra)
+```{r setup, include=FALSE, results=FALSE}
+#Instalar las librerias necesarias y cargarlas
+instalar <- function(paquete) {
+    if (!require(paquete,character.only = TRUE,
+                 quietly = TRUE, 
+                 warn.conflicts = FALSE)){
+          install.packages(as.character(paquete),
+                           dependecies = TRUE,
+                           repos = "http://cran.us.r-project.org")
+          library(paquete,
+                  character.only = TRUE, 
+                  quietly = TRUE,
+                  warn.conflicts = FALSE)
+    }
+}
+libs <- c('rgdal', 'factoextra', 'gridExtra', ) 
+lapply(libs, instalar)
 ```
+
+
 
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
@@ -86,7 +102,6 @@ fviz_pca_var(z,col.var="contrib")
 ```
 
 ```{r}
-library(gridExtra)
 gr1 <- fviz_contrib(z,choice = "var", axes = 1)
 gr2 <- fviz_contrib(z,choice = "var", axes = 2)
 grid.arrange(gr1, gr2, ncol = 2)
@@ -111,3 +126,8 @@ fviz_pca_biplot(z, repel = TRUE,
 ##Interpretaión de las graficas
 ##Grafica con elipses aplica aqui?
 ##Cemaforo de la ciudad de México
+
+```{r}
+
+```
+
