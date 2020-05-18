@@ -25,6 +25,20 @@ lapply(libs, instalar)
 options(scipen=999)
 ```
 
+```{r}
+# Este chung es para la compu de pablo porque con el codigo de arriba no me cargaba las librerias
+library('factoextra')
+library('gridExtra')
+library('sf')
+library('ggplot2')
+library('tmap')
+library('tmaptools')
+library('leaflet')
+library('dplyr')
+```
+
+
+
 ```{r,echo = FALSE}
 df<- read.csv("BD.csv")
 df[,5:13]<-df[,5:13]/df[,3]
