@@ -1,0 +1,73 @@
+---
+title: "Bootstrap & KDE"
+author: "Santiago, Roman, Mariana"
+date: "18/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# carga de librerias
+library(dplyr)
+library(lattice)
+library(MASS)
+library(KernSmooth)
+library(boot)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Lectura de archivo y ajuste de datos
+```{r}
+# La BD está en la carpetea de Data y se llama BD.csv
+df <- read.csv("../Data/BD.csv", header = TRUE)
+
+# Hacemos los ajustes descritos en la construcción del índice
+df[,5:13]<-df[,5:13]/df[,3] # dividir entre poblacion
+df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
+df[,15]<-df[,15]/100 
+df <- df[,-c(1,2,3,4,8,9,10,12,14,15)]
+
+names(df) <- c("X1","X2","X3","X4","X5","X6") #Todas las variables estan en terminos poblacionales
+attr(df$X1, "descripcion") <- "Ingresos.Inferiores. "
+attr(df$X2, "descripcion") <- "Carencia.Alimentos."
+attr(df$X3, "descripcion") <- "Carencia.Salud."
+attr(df$X4, "descripcion") <- "Personal.Medico"
+attr(df$X5, "descripcion") <- "Remuneracion" #Remuneración en miles de pesos
+attr(df$X6, "descripcion") <- "Años.Escolaridad" # Promedio años de escolaridad
+#str(df)
+head(df)
+```
+Remuestreo Bootstrap usando el paquete Boot
+```{r}
+# Las funciones requeridas están en functions y se llama np_functions.R
+source('functions/np_functions.R')
+
+mBoot <- boot.PCA(df,200,42) # Nos regresa un objeto boot
+mBoot
+
+```
+
+KDE para las muestras Bootstrap
+```{r}
+# Matriz con réplicas Bootstrap
+M <- as.matrix(mBoot$t) # réplica x delegación
+
+densityplot(M[,1])
+```
+
+
+Interavlos de Confianza Boostrap
+```{r}
+#for (i in 1:16)
+#{
+#  mBootCI <- boot.ci(mBoot, index = i, type=c("basic","norm","bca"))
+#  #mBootCI
+#  cat(mBootCI$basic[2:3])
+#}
+
+(IC1 <- boot.ci(mBoot, index = 1, type=c("basic","norm","bca")))
+JaB <- jack.after.boot(mBoot,index = 1)
+#IC1$basic[2:3]
+(IC2 <- boot.ci(mBoot, index = 12, type=c("basic","norm","bca")))
+#IC2$basic[2:3]
+```
+
