@@ -28,7 +28,7 @@ lapply(libs, instalar)
 Realizaremos en análisis exploratorio de datos para conocer el comportamiento de nuestas variables.
 
 ```{r,echo = FALSE}
-df<- read.csv("BD.csv")
+df<- read.csv('Data/BD.csv')
 df[,5:13]<-df[,5:13]/df[,3]
 df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
 df[,15]<-df[,15]/100 

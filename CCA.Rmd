@@ -1,0 +1,147 @@
+---
+title: "CCA indice"
+output: html_notebook
+---
+
+```{r}
+library(CCA)
+
+```
+
+# Anlaisis de correlación canónica para el índice
+
+El índice se puede partir en dos conjuntos de variables: El conjunto de _carencias_ de una delegación y el conujnto de _opulencias_ . 
+
+Se realizará el análisis a continuación 
+
+## CCA corrs
+
+```{r, echo = FALSE}
+# read data
+df_r <- read.csv('Data/BD.csv')
+
+df_r[,13] <- df_r[ , 13]*1000 # salary in thousands
+df_r <- df_r[, -c(1,2,3,4,8,9,10,12,14,15)]
+names(df_r) <- c("X1","X2","X3","X4","X5","X6") 
+
+# divide data sets
+df_lack <- df_r[, c('X1', 'X2', 'X3')]
+df_lush <- df_r[, c('X4', 'X5', 'X6')]
+
+```
+
+## EDA CCA
+
+Veamos como se corrleacionan entre las vars
+```{r}
+correl <- matcor(X = df_lack, df_lush)
+img.matcor( correl, type = 1)
+img.matcor( correl, type = 2)
+
+
+```
+
+
+
+Vemos que la correlación entre $U1$ y $V1$ es del 84%. Esto quiere decir que lo que suceda en un grupo, afecta de forma _inversa_ (por los coeficientes en CPA) al otro conjunto de manera muy directa.
+
+```{r}
+# CCA
+cca1 <- cc(df_lack, df_lush)
+
+# Canonic correlations
+cca1$cor
+cca1$xcoef
+cca1$ycoef
+
+```
+
+Ver a detalle las correlaciones
+```{r}
+barplot( cca1$cor)
+
+```
+
+
+## Correlaciones entre componentes
+
+-- interpretar --
+ 
+```{r}
+corrplot::corrplot(cca1$scores$corr.X.xscores)
+corrplot::corrplot(cca1$scores$corr.Y.xscores)
+corrplot::corrplot(cca1$scores$corr.X.yscores)
+corrplot::corrplot(cca1$scores$corr.Y.yscores)
+
+
+```
+
+
+Ver gráficamente las correlaciones canónicas
+
+En clase vimos que la correlación canponica es una generalización del coeficiente de regresión sin intercepto
+
+$$ \rho_{U_1, V_1}   = \beta_{1} \frac{\sigma_{xx}}{ \sigma_{yy}}$$
+
+Pero en este caso $ \sigma_{U_1 U_1} = \sigma_{V_1 V_1} = 1$
+
+```{r}
+# cca 1
+u1 <- cca1$scores$xscores[,1]
+v1 <- cca1$scores$yscores[, 1]
+
+# linear model coeff
+lm1 <- lm(formula =  v1 ~ u1 - 1, 
+          data = tibble(u1, v1))
+
+beta <- lm1$coefficients
+
+
+# graph
+g1 <- tibble(u1, v1) %>% 
+      ggplot( aes( x= u1, y = v1)) +
+      geom_point() +
+      geom_smooth( method = 'lm', formula = y ~ x - 1, color = 'red') +
+      geom_text(x = 0, y = 1, mapping =  aes(label = beta), parse = TRUE) +
+      geom_text(x = -0.25, y = 1, label = expression(beta))
+
+g1
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
