@@ -27,6 +27,7 @@ df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
 df[,15]<-df[,15]/100 
 df[,5:13]<-df[,5:13]/df[,3] # dividir entre poblacion
 df <- df[,-c(1,2,3,4,8,9,10,12,14,15)]
+#df <- df[-12,] quitar Milpa Alta
 
 names(df) <- c("X1","X2","X3","X4","X5","X6") #Todas las variables estan en terminos poblacionales
 attr(df$X1, "descripcion") <- "Ingresos.Inferiores. "
