@@ -17,17 +17,23 @@ require(plotrix)     # Plot´s
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Lectura de archivo y ajuste de datos
-```{r}
+Lectura de archivo y ajuste de datos.
+```{r read data}
 # La BD está en la carpetea de Data y se llama BD.csv
 df <- read.csv("../Data/BD.csv", header = TRUE)
+
+# Obtenemos nombres de las delegaciones en orden
+delegaciones <- df[,1]
 
 # Hacemos los ajustes descritos en la construcción del índice PCA.Rmd
 df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
 df[,15]<-df[,15]/100 
 df[,5:13]<-df[,5:13]/df[,3] # dividir entre poblacion
+
 df <- df[,-c(1,2,3,4,8,9,10,12,14,15)]
 #df <- df[-12,] quitar Milpa Alta
+
+rownames(df) <- delegaciones
 
 names(df) <- c("X1","X2","X3","X4","X5","X6") #Todas las variables estan en terminos poblacionales
 attr(df$X1, "descripcion") <- "Ingresos.Inferiores. "
@@ -38,48 +44,57 @@ attr(df$X5, "descripcion") <- "Remuneracion" #Remuneración en miles de pesos
 attr(df$X6, "descripcion") <- "Años.Escolaridad" # Promedio años de escolaridad
 #str(df)
 head(df)
-
-# declaramos los nombres de las delegaciones en el orden de la BD
-delegaciones <- c("Álvaro Obregón", "Azcapotzalco", "Benito Juárez", "Coyoacán", "Cuajimalpa de Morelos", "Cuauhtémoc", "Gustavo A. Madero","Iztacalco","Iztapalapa","La Magdalena Contreras", "Miguel Hidalgo", "Milpa Alta", "Tláhuac", "Tlalpan", "Venustiano Carranza", "Xochimilco")
 ```
-Remuestreo Bootstrap usando el paquete Boot
-```{r}
+
+Semilla para réplicas.
+```{r seed}
+seed <- 42
+```
+
+# Remuestreo Bootstrap usando el paquete Boot
+```{r bootstrap}
 # Las funciones requeridas están en functions y se llama np_functions.R
 source('functions/np_functions.R')
 
 # Aplicamos el método Bootstrap con la estadística: el índice usando PCA
-mBoot <- boot.PCA(df,200,42) # Nos regresa un objeto boot
-mBoot
-
+(mBoot <- boot.PCA(df,200,seed)) # Nos regresa un objeto boot
 ```
 
-KDE para las muestras Bootstrap - Experimentación
-```{r}
+# KDE para las muestras Bootstrap - Experimentación
+```{r kde - exp}
 # indice original
 indice <- as.vector(mBoot$t0)
+names(indice) <- delegaciones
 
 # Matriz con réplicas Bootstrap
 M <- as.matrix(mBoot$t) # réplica x delegación
+colnames(M) <- delegaciones 
 
 # Haremos un primer análisis de KDE para varios kernel´s
 k <- 1 # Número de delegación
-plot(density(M[,k], bw = "nrd"), main = paste("Kerneles indice",delegaciones[k]), col = "blue", lwd =3, ylim = c(0,1)) #SJ/SJ-dpi otras maneras de escoger el bandwith
+
+plot(density(M[,k], bw = "nrd"), 
+     main = paste("Kerneles indice",delegaciones[k]), 
+     col = "blue", lwd =3, ylim = c(0,1)) #SJ/SJ-dpi otras maneras de escoger el bandwith
 abline(v = indice[k], col = "red", lwd = 2)
 lines(density(M[,k],bw = "nrd", kernel = "rectangular"),col = "green", lwd =3)
 lines(density(M[,k],bw = "nrd", kernel = "epanechnikov"),col = "pink", lwd =3)
-legend("topright", legend = c("normal","rectangular","epanechnikov"), col = c("blue","green","pink"), lwd = c(3,3)) 
+legend("topright", legend = c("normal","rectangular","epanechnikov"), 
+       col = c("blue","green","pink"), lwd = c(3,3)) 
 
 # Ahora fijando el kernel gaussiano variaremos los anchos de banda
-plot(density(M[,k], bw = "nrd"), main = paste("Distribución indice",delegaciones[k]," distintos bw"), col = "blue", lwd =3, ylim = c(0,1)) 
+plot(density(M[,k], bw = "nrd"), 
+     main = paste("Distribución indice",delegaciones[k]," distintos bw"), 
+     col = "blue", lwd =3, ylim = c(0,1)) 
 abline(v = indice[k], col = "red", lwd = 2)
 lines(density(M[,k],bw = "SJ"),col = "green", lwd =3)
 lines(density(M[,k],bw = "SJ-dpi"),col = "pink", lwd =3)
-legend("topright", legend = c("nrd","SJ","SJ-dpi"), col = c("blue","green","pink"), lwd = c(3,3)) 
-
+legend("topright", legend = c("nrd","SJ","SJ-dpi"), 
+       col = c("blue","green","pink"), lwd = c(3,3)) 
 ```
 
-KDE para las muestras Bootstrap - Gráficas por delegación
-```{r}
+# KDE para las muestras Bootstrap - Gráficas por delegación
+```{r kde graph}
 # Haremos matrices de gráficas con los KDE para las delegaciones
 # usaremos el kernel gaussiano y el bw SJ
 par(mfrow=c(2,2))
@@ -115,41 +130,36 @@ for (i in 13:16)
 }
 ```
 
+# Intervalos de Confianza Boostrap
+```{r ic bootstrap}
+# Calcula IC para metodos basic,norm,perc,bca 
+    # Consulta funcion en "np_functions.R" (regresa matriz de ICs)
+mBootCI <- boot.IC(mBoot)
 
-Interavlos de Confianza Boostrap
-```{r}
-# Ejemplos
-(CI <- boot.ci(mBoot, index = 1, type=c("basic","norm","perc","bca"), conf = .90))
-IC1$normal[2:3]
+# Calcula IC "stud" (IC bootstrap t)
+    # Hacemos bootstrap manual
 
-# Para poder calcular el intervalo "t" usaremos Jackknife para estimar la varianza
-# Crear una función en "np_functions.R" para que reciba la matriz de muestras
-# bootstrap y regrese la estimación de la varianza para cada delegación
 
+# JACKKIFE AFTER BOOTSTRAP
+jac
+```
+
+# Jackknife after bootstrap
+Calculamos el error estándar del error estándar.
+```{r Jack after boot}
 
 ```
 
-Gráficas de los IC Bootstrap BCa para los índices por delegación
-```{r}
-# Crearemos una matriz para guardar los correspondientes intervalos de confianza
-mBootCI <- matrix(NA,16,2)
-# Llenamos la matriz
-for (i in 1:16)
-{
-  # Utilizaremos la función boot.ci usando nuestro previo objeto "mBoot"
-  BootCI <- boot.ci(mBoot, index = i, type=c("bca"), conf = .90)
-  # IC Bootstrap BCa
-  mBootCI[i,] <- BootCI$bca[4:5]
-}
 
-
+# Gráficas de los IC Bootstrap BCa para los índices por delegación
+```{r ic boot graph}
 # Grafica del índice original vs sus intervalos de confianza Bootstrap BCa
 Delegaciones.1.a.8 <- c(1:8)
 Delegaciones.9.a.16 <- c(9:16)
 
-plotCI(Delegaciones.1.a.8, indice[1:8], ui = mBootCI[1:8,2], li= mBootCI[1:8,1], main ="Índices con int. conf. del 90%", col = "red")
+plotCI(Delegaciones.1.a.8, indice[1:8], ui = mBootCI[1:8,"bca_U"], li= mBootCI[1:8,"bca_L"], main ="Índices con int. conf. del 90%", col = "red")
 
-plotCI(Delegaciones.9.a.16, indice[9:16], ui = mBootCI[9:16,2], li= mBootCI[9:16,1], main ="Índices con int. conf. del 90%", col = "red")
+plotCI(Delegaciones.9.a.16, indice[9:16], ui = mBootCI[9:16,"bca_U"], li= mBootCI[9:16,"bca_U"], main ="Índices con int. conf. del 90%", col = "red")
 
 
 # Otro método alternativo
