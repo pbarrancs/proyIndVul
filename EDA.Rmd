@@ -138,8 +138,6 @@ p <- ggplot(df.1, aes(x=C_Conf, y=Remuneracion)) +
 p+ theme(axis.text.x = element_text(angle = 90))
 ```
 
-
-
 ¿Están relacionadas las carencias? Parece que solo las alimenticias y las de salud, peor no las de servicios.
 
 ```{r}
