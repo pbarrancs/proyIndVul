@@ -138,22 +138,26 @@ for (i in 13:16)
 ```{r ic bootstrap}
 # Calcula IC para metodos basic,norm,perc,bca 
     # Consulta funcion en "np_functions.R" (regresa matriz de ICs)
-mBootCI <- boot.IC(mBoot)
+mBootCI <- boot.IC(mBoot, .90)
 
 # Calcula IC "stud" (IC bootstrap t)
-    # Hacemos bootstrap manual
+    # Hacemos bootstrap e IC manual
+    # Es normal que tarde, son bootstraps anidados.
+mBootCI <- cbind(mBootCI, boot.IC.t(df,200,seed,.90))
 
-
-# JACKKIFE AFTER BOOTSTRAP
-jac
+# Formato de presentacion IC
+mBootCI.Formato <- formato.ICS(mBootCI)
+writexl::write_xlsx(mBootCI.Formato,"BootCI.xlsx")
 ```
 
 # Jackknife after bootstrap
+
 Calculamos el error estándar del error estándar.
+
 ```{r Jack after boot}
-
+# JACKKIFE AFTER BOOTSTRAP
+jac
 ```
-
 
 # Gráficas de los IC Bootstrap BCa para los índices por delegación
 ```{r ic boot graph}
@@ -172,6 +176,5 @@ plotCI(Delegaciones.9.a.16, indice[9:16], ui = mBootCI[9:16,"bca_U"], li= mBootC
 
 #plot(9:16,indice[9:16],main ="Índices con int. conf. del 90%", xlab = "Delegaciones 9 a 16", ylab = "índice")
 #segments(9:16,mBootCI[9:16,1], 9:16, mBootCI[9:16,2], col = "blue", lty = 2)
-
 ```
 
