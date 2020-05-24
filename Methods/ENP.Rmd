@@ -31,6 +31,7 @@ df[,15]<-df[,15]/100
 df[,5:13]<-df[,5:13]/df[,3] # dividir entre poblacion
 
 df <- df[,-c(1,2,3,4,8,9,10,12,14,15)]
+#df <- df[-12,] quitar Milpa Alta
 
 rownames(df) <- delegaciones
 
@@ -73,23 +74,27 @@ colnames(M) <- delegaciones
 k <- 1 # Número de delegación
 
 plot(density(M[,k], bw = "nrd"), 
-     main = paste("Kerneles indice",delegaciones[k]), 
+     main = paste("Distribuciones índice",delegaciones[k]), 
+     xlab = "N = 200 y Ancho de banda = 0.169 (nrd)",
+     ylab = "Densidad",
      col = "blue", lwd =3, ylim = c(0,1)) #SJ/SJ-dpi otras maneras de escoger el bandwith
 abline(v = indice[k], col = "red", lwd = 2)
 lines(density(M[,k],bw = "nrd", kernel = "rectangular"),col = "green", lwd =3)
-lines(density(M[,k],bw = "nrd", kernel = "epanechnikov"),col = "pink", lwd =3)
+lines(density(M[,k],bw = "nrd", kernel = "epanechnikov"),col = "yellow", lwd =3)
 legend("topright", legend = c("normal","rectangular","epanechnikov"), 
-       col = c("blue","green","pink"), lwd = c(3,3)) 
+       col = c("blue","green","yellow"), lwd = c(3,3)) 
 
 # Ahora fijando el kernel gaussiano variaremos los anchos de banda
 plot(density(M[,k], bw = "nrd"), 
-     main = paste("Distribución indice",delegaciones[k]," distintos bw"), 
+     main = paste("Distribuciones índice",delegaciones[k]),
+     xlab = "N = 200 y Kernel = Gaussiano",
+     ylab = "Densidad",
      col = "blue", lwd =3, ylim = c(0,1)) 
 abline(v = indice[k], col = "red", lwd = 2)
 lines(density(M[,k],bw = "SJ"),col = "green", lwd =3)
-lines(density(M[,k],bw = "SJ-dpi"),col = "pink", lwd =3)
+lines(density(M[,k],bw = "SJ-dpi"),col = "yellow", lwd =3)
 legend("topright", legend = c("nrd","SJ","SJ-dpi"), 
-       col = c("blue","green","pink"), lwd = c(3,3)) 
+       col = c("blue","green","yellow"), lwd = c(3,3)) 
 ```
 
 # KDE para las muestras Bootstrap - Gráficas por delegación
