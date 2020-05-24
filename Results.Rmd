@@ -15,9 +15,24 @@ Cargamos los datos
 df <- read.csv("Data/BD.csv", header = TRUE)
 
 # Asignación de variables
-Poblacion <- DF$Pob 
-Superficie <- DF$km2
-Sol.desempleo <- DF$Sol_des
+Poblacion <- df$Pob 
+Superficie <- df$km2
+Sol.desempleo <- df$Sol_des
+PEA <- df$PEA
+Casos <- df$Casos_C19
+Delegaciones <- as.vector(df$Alc)
+```
+
+Ajustamos los nombres de las delegaciones para poderlos graficar
+```{r}
+# Recortamos los nombres largos
+Delegaciones[1] <- "Álvaro Obr."
+Delegaciones[3] <- "Benito Jua."
+Delegaciones[5] <- "Cuajimalpa"
+Delegaciones[7] <- "Gustavo A.M."
+Delegaciones[10] <- "Magda. Cont."
+Delegaciones[11] <- "Miguel Hid."
+Delegaciones[15] <- "Venust. Carr."
 ```
 
 
@@ -26,29 +41,24 @@ Comparaciones del índice
 # indice de vulnerabilidad
 indice <- c(4.2369847,3.1202693,3.7918290,8.8090276,4.0816771,1.0867166,14.6877406,10.3079868,14.8863182,17.3828798,0.9210095,24.6801129,18.2513107,8.7275107,7.7044839,15.3095190)
 
-# casos confirmados al 19/05/20
-Casos <- c(2656, 2007, 1911, 2569, 755, 2376, 5157, 2237, 7361,
-           1394, 1665, 981, 2065, 3061, 2174, 2507)
-
-D <- Sol.desempleo
-D2 <- Sol.desempleo/Poblacion
-D3 <- Sol.desempleo/Superficie
-
-par(mar = c(5,5,2,5))
-plot(indice, col = "blue", main = "Índice vs Desempleo %", xlab = "Delegaciones 1 a 16", ylab = "índice", type = "b")
+# Graficamos el índice vs Sol. Desempleo/PEA 
+par(mar = c(6,5,2,5))
+plot(indice, col = "blue", main = "Índice vs Desempleo Covid-19", xlab = "", ylab = "índice", type = "b", xaxt = "n")
+axis(side = 1, at = 1:16, labels = Delegaciones, las = 2, cex.axis = .8)
 par(new = T)
-plot(D2, col = "red", axes=F, xlab=NA, ylab=NA, type = "b")
+plot(Sol.desempleo/PEA, col = "red", axes=F, xlab=NA, ylab=NA, type = "b")
 axis(side = 4)
 mtext(side = 4, line = 3, 'Solicitudes Desempleo %',)
 legend("topleft",legend=c("índice", "Solicitudes"), lty=c(0,0), pch=c(16, 16), col=c("blue", "red"))
 
-
-par(mar = c(5,5,2,5))
-plot(indice, col = "blue", main = "Índice vs Casos confirmados %", xlab = "Delegaciones 1 a 16", ylab = "índice", type = "b")
+# Graficamos el índice vs Sol. Casos confirmado/Poblacion
+par(mar = c(6,5,2,5))
+plot(indice, col = "blue", main = "Índice vs Contagios Covid-19", xlab = "", ylab = "índice", type = "b", xaxt = "n")
+axis(side = 1, at = 1:16, labels = Delegaciones, las = 2, cex.axis = .8)
 par(new = T)
 plot(Casos/Poblacion, col = "red", axes=F, xlab=NA, ylab=NA, type = "b")
 axis(side = 4)
-mtext(side = 4, line = 3, 'Casos confirmados %')
+mtext(side = 4, line = 3, '% de la población contagiada')
 legend("topleft",legend=c("índice", "Casos"), lty=c(0,0), pch=c(16, 16), col=c("blue", "red"))
 ```
 

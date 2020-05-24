@@ -64,7 +64,7 @@ summary(z, loadings=T)
 ```
 Para eso scamos la matriz de correlacion $R$ que es la siguiente.
 ```{r}
-(R <- round(cor(df),3))
+(R <- cor(df))
 ```
 
 Ahora para calcular las componentes principales encontraremos sus egienvecores.
