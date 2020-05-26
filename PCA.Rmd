@@ -38,11 +38,11 @@ library('dplyr')
 ```
 
 ```{r,echo = FALSE}
-df<- read.csv('Data/BD.csv')
-df[,5:13]<-df[,5:13]/df[,3]
-df[,13]<-df[,13]*1000 #Remuneración en miles de pesos
-df[,15]<-df[,15]/100 
-df <- df[,-c(1,2,3,4,8,9,10,12,14,15)]
+df<- read.csv('Data/BD.csv',header = TRUE, row.names = 1)
+df[,4:12]<-df[,4:12]/df[,2]
+df[,12]<-df[,12]*1000 #Remuneración en miles de pesos
+df[,14]<-df[,14]/100 
+df <- df[,c(4,5,6,10,12,15)]
 names(df) <- c("X1","X2","X3","X4","X5","X6") #Todas las variables estan en terminos poblacionales
 attr(df$X1, "descripcion") <- "Ingresos Inferiores. "
 attr(df$X2, "descripcion") <- "Carencia de Alimentos."
@@ -50,7 +50,7 @@ attr(df$X3, "descripcion") <- "Carencia de Salud."
 attr(df$X4, "descripcion") <- "Personal medico"
 attr(df$X5, "descripcion") <- "Remuneracion (miles de pesos)"
 attr(df$X6, "descripcion") <- "Promedio años de escolaridad"
-#str(df)
+str(df)
 head(df)
 ```
 ## Calculo de los Componentes Principales
@@ -64,7 +64,7 @@ summary(z, loadings=T)
 ```
 Para eso scamos la matriz de correlacion $R$ que es la siguiente.
 ```{r}
-(R <- cor(df))
+(round(R <- cor(df),3))
 ```
 
 Ahora para calcular las componentes principales encontraremos sus egienvecores.
@@ -77,11 +77,11 @@ eig <- eigen(R)
 Podemos ver que los componentes principales obtenidos de la matriz de correlación, son los siguientes.
 $$\begin{array}{l}
 Y_{1} = -0.449X_{1} - 0.371X_{2} - 0.405X_{3} + 0.395X_{4} + 0.380X_{5} + 0.442X_{6}\\
-Y_{2} = -0.115X_{1} - 0.308X_{2} - 0.390X_{3} - 0.531X_{4} - 0.618X_{5} + 0.275X_{6}\\
-Y_{3} = -0.415X_{1} + 0.813X_{2} - 0.035X_{3} + 0.058X_{4} - 0.200X_{5} + 0.349X_{6}\\
-Y_{4} = -0.245X_{1} - 0.309X_{2} + 0.805X_{3} + 0.112X_{4} - 0.251X_{5} + 0.347X_{6}\\
-Y_{5} =  0.210X_{1} - 0.042X_{2} - 0.183X_{3} + 0.738X_{4} - 0.598X_{5} - 0.135X_{6} \\
-Y_{6} = 0.713X_{1} + 0.097X_{2} - 0.008X_{3} + 0.018X_{4} + 0.113X_{5} + 0.685X_{6}\\
+Y_{2} = -0.116X_{1} - 0.307X_{2} - 0.390X_{3} - 0.531X_{4} - 0.619X_{5} + 0.275X_{6}\\
+Y_{3} = -0.415X_{1} + 0.813X_{2} - 0.034X_{3} + 0.059X_{4} - 0.200X_{5} + 0.349X_{6}\\
+Y_{4} = -0.243X_{1} - 0.309X_{2} + 0.806X_{3} + 0.111X_{4} - 0.249X_{5} + 0.348X_{6}\\
+Y_{5} =  0.211X_{1} - 0.043X_{2} - 0.181X_{3} + 0.739X_{4} - 0.598X_{5} - 0.135X_{6} \\
+Y_{6} = 0.713X_{1} + 0.097X_{2} - 0.010X_{3} + 0.016X_{4} + 0.114X_{5} + 0.684X_{6}\\
 \end{array}$$
 
 ## Graficas y Analisis
@@ -100,25 +100,24 @@ print(var)
 
 
 ```{r}
-fviz_screeplot(z,barfill = "steelblue",barcolor = "steelblue",linecolor = "red",addlabels =TRUE)
+fviz_screeplot(z,barfill = "steelblue",barcolor = "steelblue",linecolor = "red",addlabels =TRUE, xlab = "Componentes", ylab = "Porcentaje de varianza explicada", title = "Grafica de Codo")
 ```
 Podemos ver que la primer componente principal $Y_1$ aporta un $70\%$ de variabilidad. Por lo cual podriamos decir que resume de buena manera los datos.
-
 
 Al buscar la interpretacion del primer componente principal podemos destacar lo siguiente. Los coeficientes de las variables $X_1$, $X_2$,$X_3$ asignadas a _Ingresos Inferiores_, _Carencia de Alimentos_, _Carencia de Salud_ tienen signo negativo. Contrastandolo con los coeficientes correspoindientes a las variables $X_4$, $X_5$,$X_6$ asignadas a _Personal medico_ , _Remuneracion (miles de pesos)_, _Promedio años de escolaridad_ tienen signo positivo. De donde podemos infererir que se pondera negativamente las variables que representan a una persona mas vulnerable. Y al contrario, se pondera positivamente las variables  que representan a una persona menos vulnerable.
 
 Podemos verlo de forma mas clara en la siguiente grafica. Podemos visualizar las CP como proyecciones en el espacio de las dos primeras componentes principales.
 
 ```{r}
-fviz_pca_var(z,col.var="contrib")
+fviz_pca_var(z,col.var="contrib", xlab = "Y1", ylab = "Y2")
 ```
 Observamos que el conjunto de variables $X_2$, $X_3$ apuntan practicamente a la misma dirección mientras que  $X_1$ apunta  en el mismo sentido pero unos cuantos grados de diferencia. Por otro lado $X_4$, $X_5$,$X_6$ apuntan completamente en sentido opuesto y podemos ver que en particular $X_6$. Tambien, podemos ver que la variable $X_2$ es la que tiene una menor contribución.
 
 Para ver que tanta aportacion proporcionan a las dimensiones cada una de las variables en la siguiente grafica.
 
 ```{r}
-gr1 <- fviz_contrib(z,choice = "var", axes = 1)
-gr2 <- fviz_contrib(z,choice = "var", axes = 2)
+gr1 <- fviz_contrib(z,choice = "var", axes = 1, title = "Contribucion de las Variables de Y1")
+gr2 <- fviz_contrib(z,choice = "var", axes = 2, title = "Contribucion de las Variables de Y2")
 grid.arrange(gr1, gr2, ncol = 2)
 ```
 Podemos ver que para la primer dimension las dos variables que mas aportan son $X_1$ y $X_6$ mientras que para la segunda dimension son las variables $X_5$ y $X_4$
@@ -132,7 +131,9 @@ fviz_pca_biplot(z,
                 col.var = "#2E9FDF", # Variables color
                 col.ind = "cos2", # Color by the quality of representation
                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                repel = TRUE  
+                repel = TRUE,
+                ylab = "Y2",
+                xlab = "Y1"
                 )
 ```
  
@@ -143,13 +144,13 @@ fviz_pca_biplot(z,
 ```{r}
 scores <- eig$vectors[,1]
 ind <- as.matrix(df) %*% scores
-ind <- round(100/as.numeric(ind),3)
+IV <- round(100/as.numeric(ind),3)
 ```
 
 
 ```{r}
 nomgeo <- c("Álvaro Obregón", "Azcapotzalco", "Benito Juárez", "Coyoacán", "Cuajimalpa de Morelos", "Cuauhtémoc", "Gustavo A. Madero","Iztacalco","Iztapalapa","La Magdalena Contreras", "Miguel Hidalgo", "Milpa Alta", "Tláhuac", "Tlalpan", "Venustiano Carranza", "Xochimilco")
-index <- data.frame(nomgeo,ind)
+index <- data.frame(nomgeo,IV)
 ```
 
 
@@ -164,7 +165,7 @@ str(mapa_datos)
 
 ```{r, echo=FALSE, include=FALSE}
 tm_shape(mapa_datos)+
-  tm_polygons("ind",id="nomgeo",plette="Reds")
+  tm_polygons("IV",id="nomgeo",plette="Reds")
 ```
 
 ```{r}
