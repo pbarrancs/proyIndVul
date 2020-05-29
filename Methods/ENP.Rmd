@@ -198,11 +198,10 @@ df_ic2 <- df_ic[9:16,]
   labs(title = "Intervalos de Confianza Bootstrap") +
   theme_classic())
 
-(g2 <- ggplot(df_ic2, aes(x = Delegacion, y = Indice, color=Delegacion)) +
+(g2 <- ggplot(df_ic2, aes(x = as.factor(Delegacion), y = Indice, color=Delegacion)) +
   geom_point() +
   geom_errorbar(aes(ymin=Lower,ymax=Upper)) +
   labs(title = "Intervalos de Confianza Bootstrap") +
-  coord_cartesian(ylim = c(0, 30)) + 
   theme_classic())
   
 ```

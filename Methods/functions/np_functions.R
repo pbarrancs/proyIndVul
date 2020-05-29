@@ -173,6 +173,9 @@ formato.ICS <- function(data){
 }
 
 # JACKKIFE AFTER BOOTSTRAP
+data <- df
+B <- 200
+seed
 jackknife.after.boot <- function(data, B, seed){
   noms <- c("AO","AZ","BJ","CO","CM","CU","GAM","IZC","IZP","MC","MH","MA","TLH","TLP","VC","XO")
   #seed
@@ -209,56 +212,22 @@ jackknife.after.boot <- function(data, B, seed){
   scores <- 100/abs(scores) # ajuste del indice
   
   # Jackknife After Bootstrap: error estandar para cada muestra boot sin la delegacion "XX"
-    se.jack <- matrix(ncol = m, nrow = m) # error estandar para cada indice, para cada muestra sin del "XX"
+    se.B <- matrix(ncol = m, nrow = m) # error estandar para cada indice, para cada muestra sin del "XX"
     # se_jack_B(i)
-    for (d in 1:m) { # para cada delegacion# delegacion que no aparece
-      for (j in 1:m) { 
+    for (d in 1:m) { # Delegacion indice
+      for (j in 1:m) { # Delegacion que no aparece
       # calculamos se para J(i)
-      se.jack[j,d] <- sd(scores[(indices[!is.na(indices[,j]),d]),d])
+        # Cada renglón es la del que NO aparece en el score para la delegacion de la columna
+        s <- scores[!is.na(indices[,j]),d]
+        se.B[j,d] <- sqrt(mean((s - mean(s))^2))
       }
     }
   
     # se_jack(se_jack_B(i))
     se <- function(x) sqrt((length(x)-1)*mean((x-mean(x))^2))
     
-   
-
-  # 
-  # # compute standard error for each theta_hat_b: second bootstrap
-  # boot.scores <- boot(Xs, statistic = scores.PCA, R = B)
-  # # matriz de error estandar para cada theta_hat_b
-  # for (j in 1:16) {
-  #   se_b[i,j] <- sd(boot.scores$t[,j])
-  # 
-  # # store theta_hat_b
-  # scores <- matrix(nrow = B, ncol = m)
-  # 
-  # # store se(theta_hat_b)
-  # se_b <- matrix(nrow = B,ncol = m)
-  # 
-  # 
-  # }
-  # 
-  # 
-  # # Obtenemos estimadores bootstrap (200 para cada delegacion)
-  # scores <- 100/abs(scores) # ajuste del indice
-  # 
-  # # Cuantiles
-  # t <- matrix(nrow = B, ncol = m)
-  # q <- matrix(nrow = m, ncol = 2, dimnames = list(delegaciones,c("t_1-(a/2)","t_(a/2)")))
-  # for (d in 1:m) {
-  #   # Estadistica t_b's para cada delegacion
-  #   t[,d] <- (scores[,d] - indice[d])/se_b[,d] # (theta_hat - theta)/se(theta_hat)
-  #   # obtener cuantiles al 90% de confianza
-  #   q[d,] <- quantile(t[,d],probs = c(1-alpha/2,alpha/2))
-  # }
-  # 
-  # # Intervalos
-  # IC_t <- matrix(nrow = m, ncol = 2)
-  # for (d in 1:m) {
-  #   IC_t[d,] <- (indice[d] - q[d,]*sd(scores[,d]))
-  # }
-  # dimnames(IC_t) <- list(delegaciones,c("stud_L","stud_U"))
-  # return(IC_t)
+    se.jack <- apply(se.B, 2, se)
+    
+    return(se.jack)
 }
 
