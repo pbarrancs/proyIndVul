@@ -14,6 +14,8 @@ library(KernSmooth)  # KDE
 library(boot)        # Bootstrap
 library(ggplot2)    
 require(plotrix)     # Plot´s
+library(scales)
+library(gridExtra)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -176,5 +178,32 @@ plotCI(Delegaciones.9.a.16, indice[9:16], ui = mBootCI[9:16,"bca_U"], li= mBootC
 
 #plot(9:16,indice[9:16],main ="Índices con int. conf. del 90%", xlab = "Delegaciones 9 a 16", ylab = "índice")
 #segments(9:16,mBootCI[9:16,1], 9:16, mBootCI[9:16,2], col = "blue", lty = 2)
+noms <- c("AO","AZ","BJ","CO","CM","CU","GAM","IZC","IZP","MC","MH","MA","TLH","TLP","VC","XO")
+ind2 <- round(indice,2)
+ic_prom <- apply(mBootCI.Formato, 2, mean)
+
+
+df_ic <- cbind(noms, ind2,
+               round(ic_prom[grep("_L",names(ic_prom))],2),
+               round(ic_prom[grep("_U",names(ic_prom))],2))  %>% as.data.frame()
+
+colnames(df_ic) <- c("Delegacion","Indice","Lower","Upper")
+
+df_ic1 <- df_ic[1:8,]
+df_ic2 <- df_ic[9:16,]
+
+(g1 <- ggplot(df_ic1, aes(x = Delegacion, y = Indice, color=Delegacion)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=Lower,ymax=Upper)) +
+  labs(title = "Intervalos de Confianza Bootstrap") +
+  theme_classic())
+
+(g2 <- ggplot(df_ic2, aes(x = Delegacion, y = Indice, color=Delegacion)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=Lower,ymax=Upper)) +
+  labs(title = "Intervalos de Confianza Bootstrap") +
+  coord_cartesian(ylim = c(0, 30)) + 
+  theme_classic())
+  
 ```
 
